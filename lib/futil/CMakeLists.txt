@@ -5,5 +5,7 @@ include(ExternalProject)
 ExternalProject_Add(
    Futil
    GIT_REPOSITORY https://github.com/DrAlexx/Futils.git
+   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${DEBUG_INSTALL_ROOT}
+   UPDATE_COMMAND git pull
 )
 

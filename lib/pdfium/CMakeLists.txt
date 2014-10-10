@@ -6,4 +6,6 @@ ExternalProject_Add(
    pdfium
    GIT_REPOSITORY https://github.com/DrAlexx/pdfium.git
    GIT_TAG light_version
+   UPDATE_COMMAND git pull
+   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${DEBUG_INSTALL_ROOT}
 )

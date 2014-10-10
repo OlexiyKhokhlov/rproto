@@ -15,7 +15,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wc++0x-compat -Wall -Wextra 
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -fomit-frame-pointer -march=pentium4 -mtune=pentium4 -flto")
 set(CMAKE_LINKER_FLAGS_RELEASE "${CMAKE_LINKER_FLAGS_RELEASE} -s -flto")
 
+set(DEBUG_INSTALL_ROOT "${CMAKE_CURRENT_BINARY_DIR}/local_root")
+
 #add_subdirectory(lib)
-add_subdirectory(reader)
+add_subdirectory(q5_app)
 add_subdirectory(lib/futil)
 add_subdirectory(lib/pdfium)
+
