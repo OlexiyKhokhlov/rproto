@@ -4,19 +4,19 @@
 #include <QLocale>
 #include <QSettings>
 
-#include <g3log/g2log.hpp>
-#include <g3log/g2logworker.hpp>
+//#include <g3log/g2log.hpp>
+//#include <g3log/g2logworker.hpp>
 #include <util/singletone.h>
 
 #include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {
-    using namespace g2;
+/*    using namespace g2;
     std::unique_ptr<LogWorker> logworker{ LogWorker::createWithNoSink() };
     // initialize the logger before it can receive LOG calls
     initializeLogging(logworker.get());
-
+*/
     QApplication app(argc, argv);
 
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath()+"/plugins");

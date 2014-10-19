@@ -1,6 +1,6 @@
-#include "api/bookfactory.h"
-#include "api/iplugin.h"
-#include "api/ibook.h"
+#include <bookfactory.h>
+#include <iplugin.h>
+#include <ibook.h>
 
 #include <QFileInfo>
 #include <QDebug>
@@ -34,8 +34,7 @@ QStringList BookFactory::supportedExtensions()
 {
     return pluginTable.keys();
 }
-
-boost::intrusive_ptr<IBook> BookFactory::createBook(const QString& path)
+IBook* BookFactory::createBook(const QString& path)
 {
     QFileInfo finfo(path);
     if(finfo.exists() && finfo.isFile()){

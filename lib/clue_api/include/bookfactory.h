@@ -2,7 +2,7 @@
 
 #include <QStringList>
 #include <QHash>
-#include <iunknown.h>
+#include <com/iunknown.h>
 
 namespace RProto{
 
@@ -17,7 +17,7 @@ public:
 
     bool registerPlugin(IPlugin* plug);
     QStringList supportedExtensions();
-    boost::intrusive_ptr<IBook> createBook(const QString& path);
+    IBook* createBook(const QString& path);
 
 private:
     QHash<QString, IPlugin*> pluginTable;

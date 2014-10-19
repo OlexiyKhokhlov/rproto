@@ -26,4 +26,4 @@ add_executable(reader ${reader_SOURCES} ${reader_HEADERS})
 target_link_libraries(reader ${G3LOG_LIBRARIES})
 qt5_use_modules(reader Core Gui Widgets)
 
-include_directories("../lib/base_classes")
+include_directories(${FUTIL_INCLUDE_DIR})

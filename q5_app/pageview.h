@@ -38,6 +38,6 @@ private:
 //    boost::intrusive_ptr<RProto::IAsyncRenderer> renderer;
     QPixmap*    screenPixmap;
 
-    size_t      currentPage;
+    int      currentPage;
     QPoint      currentOffset;
 };

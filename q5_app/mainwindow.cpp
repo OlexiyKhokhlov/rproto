@@ -7,7 +7,7 @@
 //#include <djvubook.h>
 //#include <djvupagelayout.h>
 
-#include <g3log/g2log.hpp>
+//#include <g3log/g2log.hpp>
 
 #include <QSettings>
 #include <QFileDialog>
@@ -49,7 +49,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
 
 MainWindow::~MainWindow()
 {
-    delete bookFactory;
+    //delete bookFactory;
 }
 
 void MainWindow::closeEvent( QCloseEvent* )

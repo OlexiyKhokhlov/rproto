@@ -63,7 +63,7 @@ void PageView::pageUp()
 
 void PageView::pageDown()
 {
-    currentPage = std::max((size_t)0, currentPage-1);
+    currentPage = std::max(0, currentPage-1);
     update();
 }
 
@@ -147,7 +147,7 @@ void PageView::onScrollBarValueChanged(int /*value*/)
     }
 }
 
-void PageView::onLayoutChanged(int page, QSize size)
+void PageView::onLayoutChanged(int page, QSize /*size*/)
 {
     if(currentPage == page){
         updateScrollBars();
