@@ -21,7 +21,7 @@ set(DEBUG_INSTALL_ROOT "${CMAKE_CURRENT_BINARY_DIR}/local_root")
 set(FUTIL_INCLUDE_DIR "${DEBUG_INSTALL_ROOT}/include/futil")
 set(FUTIL_LIBRARY "${DEBUG_INSTALL_ROOT}/lib/libfutil.a")
 set(PDFIUM_INCLUDE_DIR "${DEBUG_INSTALL_ROOT}/include/pdfium")
-set(PDFIUM_LIBRARY "${DEBUG_INSTALL_ROOT}/lib/libpdfium.so")
+set(PDFIUM_LIBRARY "${DEBUG_INSTALL_ROOT}/lib/libpdfium.a")
 set(CLUE_API_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/clue_api/include")
 
 add_subdirectory(q5_app)
