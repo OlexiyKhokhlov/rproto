@@ -9,9 +9,10 @@
 #include <QGuiApplication>
 #include <QScreen>
 
-Layout::Layout(Book *book)
+Layout::Layout(Book *b)
+    :bookOwner(b)
 {
-    assert(book != nullptr);
+    assert(bookOwner != nullptr);
 
     auto screens = QGuiApplication::screens();
     assert(screens.size() != 0);
@@ -20,10 +21,10 @@ Layout::Layout(Book *book)
     dpiX = fisrt_screen->physicalDotsPerInchX();
     dpiY = fisrt_screen->physicalDotsPerInchY();
 
-    auto page_count = FPDF_GetPageCount(book->document());
+    auto page_count = FPDF_GetPageCount(bookOwner->document());
     page_vector.reserve(page_count);
     for(int i=0; i<page_count; ++i){
-        Page pg={FPDF_LoadPage(book->document(),i),1};
+        IInternalLayout::PageDescriptor pg={FPDF_LoadPage(bookOwner->document(),i),1};
         page_vector.push_back(pg);
     }
 }
@@ -38,6 +39,12 @@ Layout::~Layout()
 //Iunknown interface
 COM::HResult Layout::QueryInterface(const std::string& id, void** ppv)
 {
+    //IInternalLayout
+    if(id == IInternalLayout::iid){
+        *ppv = (IInternalLayout*)this;
+        return COM::HResult();
+    }
+
     if(id == RProto::ILayout::iid){
         *ppv = (RProto::ILayout*)this;
         return COM::HResult();
@@ -47,6 +54,10 @@ COM::HResult Layout::QueryInterface(const std::string& id, void** ppv)
 }
 
 //ILayout interface
+RProto::IBook* Layout::book(){
+    return (RProto::IBook*)bookOwner;
+}
+
 int Layout::pages()const
 {
     return page_vector.size();
@@ -55,7 +66,7 @@ int Layout::pages()const
 QSize Layout::pageSize(int rpage)const
 {
     double width, height;
-    auto err = FPDF_GetPageSizeByIndex(book->document(), rpage, &width, &height);
+    auto err = FPDF_GetPageSizeByIndex(bookOwner->document(), rpage, &width, &height);
     if(err == 0)
         return QSize();
 
@@ -111,4 +122,8 @@ RProto::IRect* Layout::createRect(int rpage, int x, int y, int width, int height
 QObject* Layout::qobject()
 {
     return nullptr;
+}
+
+IInternalLayout::PageDescriptor& Layout::getPageDescr(int rpage){
+    return page_vector[rpage];
 }

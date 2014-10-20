@@ -1,13 +1,14 @@
 #pragma once
 
 #include <ilayout.h>
+#include <iinternallayout.h>
 #include <com/basecomponent.h>
 #include <fpdfview.h>
 #include <vector>
 
 class Book;
 
-class Layout : public COM::BaseComponent, public RProto::ILayout
+class Layout : public COM::BaseComponent, public RProto::ILayout, public IInternalLayout
 {
 public:
     explicit Layout(Book *book);
@@ -23,26 +24,23 @@ public:
     }
 
     //ILayout interface
+    virtual RProto::IBook* book() override;
     virtual int pages()const override;
-
     virtual QSize pageSize(int rpage=0)const override;
     virtual double pageZoom(int rpage=0)const override;
     virtual void setPageZoom(int rpage=0, double zoom=1) override;
     virtual void setDocumentZoom(double zoom=1) override;
-
     virtual RProto::IPoint* createPoint(int rpage, int x, int y)const override;
     //TODO create a point by link
     //virtual IPoint* createPoint(ILink *link)const override;
     virtual RProto::IRect* createRect(int rpage, int x, int y, int width, int height)const override;
-
     virtual QObject* qobject() override;
 
+    //IInternalLayout interface
+    virtual IInternalLayout::PageDescriptor& getPageDescr(int rpage=0) override;
+
 private:
-    Book *book;
+    Book *bookOwner;
     double dpiX, dpiY;
-    struct Page{
-        FPDF_PAGE  pdf_page;
-        double zoom;
-    };
-    std::vector<Page> page_vector;
+    std::vector<IInternalLayout::PageDescriptor> page_vector;
 };

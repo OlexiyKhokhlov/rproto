@@ -22,6 +22,7 @@ set(HEADERS
     point.h
     rect.h
     book.h
+    iinternallayout.h
     layout.h
     imagetile.h
     renderer.h
@@ -33,6 +34,7 @@ set(SOURCES
     layout.cpp
     imagetile.cpp
     renderer.cpp
+    ids.cpp
 )
 
 add_library(pdfiumglue SHARED

@@ -18,7 +18,14 @@
 class ImageTile : public COM::BaseComponent, public RProto::IImageTile
 {
 public:
-    ImageTile(RProto::ILayout *lay, int page, double zoom, int x, int y, int width, int height);
+    enum ImageFormat{
+        FORMAT_MONO = 1,
+        FORMAT_RGB888 = 2,
+        FORMAT_RGB32 = 3,
+        FORMAT_ARGB32 = 4,
+    };
+
+    ImageTile(RProto::ILayout *lay, int page, double zoom, int x, int y, int width, int height, ImageFormat format = FORMAT_RGB32);
     virtual ~ImageTile();
 
     // IUnknown interface

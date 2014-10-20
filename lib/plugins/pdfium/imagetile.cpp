@@ -1,9 +1,9 @@
-#include "imagetile.h"
+#include <imagetile.h>
 
-ImageTile::ImageTile(RProto::ILayout *lay, int page, double zoom, int x, int y, int width, int height)
+ImageTile::ImageTile(RProto::ILayout *lay, int page, double zoom, int x, int y, int width, int height, ImageFormat format)
     :rect(lay, page, zoom, x, y, width, height)
 {
-    //pdf_bitmap = FPDFBitmap_CreateEx();
+    pdf_bitmap = FPDFBitmap_CreateEx(width, height, format, nullptr, 0);
 }
 
 ImageTile::~ImageTile()

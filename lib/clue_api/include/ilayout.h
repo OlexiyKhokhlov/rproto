@@ -9,14 +9,15 @@ namespace RProto {
 
 class IPoint;
 class IRect;
+class IBook;
 
 class ILayout : public COM::IUnknown
 {
 public:
     virtual ~ILayout(){}
 
+    virtual RProto::IBook* book() =0;
     virtual int pages()const =0;
-
     virtual QSize pageSize(int rpage=0)const =0;
     virtual double pageZoom(int rpage=0)const =0;
     virtual void setPageZoom(int rpage=0, double zoom=1) =0;
