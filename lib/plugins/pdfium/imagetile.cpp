@@ -1,7 +1,7 @@
 #include <imagetile.h>
 
 ImageTile::ImageTile(RProto::ILayout *lay, int page, double zoom, int x, int y, int width, int height, ImageFormat format)
-    :rect(lay, page, zoom, x, y, width, height)
+    :rect(lay, page, zoom, x, y, width, height, (COM::BaseComponent*)this)
 {
     pdf_bitmap = FPDFBitmap_CreateEx(width, height, format, nullptr, 0);
 }
@@ -19,9 +19,14 @@ COM::HResult ImageTile::QueryInterface(const std::string &id, void **ppv)
     }
 
     if(id == RProto::IRect::iid){
-        *ppv = (RProto::IRect*)this;
+        *ppv = (RProto::IRect*)&rect;
         return COM::HResult();
     }
 
     return COM::BaseComponent::QueryInterface(id, ppv);
+}
+
+// IImageTile interface
+const char* ImageTile::data()const{
+    return (const char*)FPDFBitmap_GetBuffer(pdf_bitmap);
 }

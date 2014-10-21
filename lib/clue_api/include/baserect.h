@@ -8,7 +8,7 @@ namespace RProto {
 class BaseRect : public COM::BaseComponent, public IRect
 {
 public:
-    BaseRect(ILayout *lay, int page, double zoom, int x, int y, int width, int height);
+    BaseRect(ILayout *lay, int page, double zoom, int x, int y, int width, int height, IUnknown *owner=nullptr);
     virtual ~BaseRect();
 
     // IUnknown interface

@@ -4,8 +4,9 @@
 
 using namespace RProto;
 
-BaseRect::BaseRect(ILayout *lay, int page, double zoom, int x, int y, int width, int height)
-    :mLayout(lay)
+BaseRect::BaseRect(ILayout *lay, int page, double zoom, int x, int y, int width, int height, IUnknown *owner)
+    :BaseComponent(owner)
+    ,mLayout(lay)
     ,mPage(page)
     ,mZoom(zoom)
     ,mX(x)

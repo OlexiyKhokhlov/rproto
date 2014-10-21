@@ -1,12 +1,12 @@
 #pragma once
 
-#include <irect.h>
+#include <com/iunknown.h>
 
 namespace RProto {
 
 class ILayout;
 
-class IImageTile : public IRect
+class IImageTile : public COM::IUnknown
 {
 public:
     virtual const char* data()const =0;

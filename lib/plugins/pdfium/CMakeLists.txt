@@ -3,6 +3,8 @@ cmake_minimum_required (VERSION 2.8)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+add_definitions(-DBUILDING_DLL)
+
 find_package(g3log REQUIRED)
 include_directories(${G3LOG_INCLUDE_DIRS})
 

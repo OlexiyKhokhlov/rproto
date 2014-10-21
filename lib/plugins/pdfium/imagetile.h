@@ -37,6 +37,13 @@ public:
     }
     virtual COM::HResult QueryInterface(const std::string &, void **ppv) override;
 
+    // IImageTile interface
+    virtual const char* data()const override;
+
+    FPDF_BITMAP pdfBitmap(){
+        return pdf_bitmap;
+    }
+
 private:
     FPDF_BITMAP     pdf_bitmap;
     RProto::BaseRect rect;

@@ -10,7 +10,7 @@ Plugin::Plugin()
 
 Plugin::~Plugin()
 {
-FPDF_DestroyLibrary();
+    FPDF_DestroyLibrary();
 }
 
 //Iunknown interface

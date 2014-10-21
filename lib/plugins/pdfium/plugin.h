@@ -1,5 +1,6 @@
 #pragma once
 
+#include <util/visibility.h>
 #include <com/basecomponent.h>
 #include <iplugin.h>
 
@@ -7,7 +8,7 @@ namespace RProto {
     class IBook;
 }
 
-class Plugin : public COM::BaseComponent, public RProto::IPlugin
+class DLL_PUBLIC Plugin : public COM::BaseComponent, public RProto::IPlugin
 {
 public:
     Plugin();
