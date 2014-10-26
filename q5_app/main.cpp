@@ -36,5 +36,7 @@ int main(int argc, char *argv[])
     MainWindow *mwindow = new MainWindow;
     mwindow->show();
 
-    return app.exec();
+    auto retcode = app.exec();
+    delete mwindow;
+    return retcode;
 }

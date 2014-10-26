@@ -18,7 +18,7 @@ public:
     }
 
     //IBook interface
-    virtual RProto::ILayout* createLayout() override;
+    virtual RProto::ILayout* createLayout(double dpix, double dpiy) override;
     virtual RProto::IRenderer* createRenderer() override;
 
     //Plugin private

@@ -7,10 +7,23 @@
 #include <QPainter>
 #include <QScrollBar>
 #include <QRect>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QScreen>
+#include <QDebug>
+
+#include <iimagetile.h>
+#include <irect.h>
+#include <ipoint.h>
 
 PageView::PageView(QWidget *parent) :
     QAbstractScrollArea(parent)
+  ,book(nullptr)
+  ,layout(nullptr)
+  ,renderer(nullptr)
   ,screenPixmap(nullptr)
+  ,currentPage(0)
+  ,clearPage(false)
 {
     viewport()->setAttribute(Qt::WA_PaintOnScreen);
     viewport()->setAttribute(Qt::WA_NoSystemBackground);
@@ -18,16 +31,6 @@ PageView::PageView(QWidget *parent) :
 
     connect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(onScrollBarValueChanged(int)));
     connect(horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(onScrollBarValueChanged(int)));
-
-    QAction *nextPageAction =new  QAction(QIcon(), tr("Next Page"), this);
-    nextPageAction->setShortcut(QKeySequence("PgDown"));
-    connect(nextPageAction, SIGNAL(triggered()), this, SLOT(pageDown()));
-    addAction(nextPageAction);
-
-    QAction *prevPageAction =new  QAction(QIcon(), tr("Previous Page"), this);
-    prevPageAction->setShortcut(QKeySequence("PgUp"));
-    connect(prevPageAction, SIGNAL(triggered()), this, SLOT(pageUp()));
-    addAction(prevPageAction);
 
 //    QAction *homePageAction =new  QAction(QIcon(), tr("Home"), this);
 //    homePageAction->setShortcut(QKeySequence("Home"));
@@ -43,48 +46,92 @@ PageView::PageView(QWidget *parent) :
 
 PageView::~PageView()
 {
+    qDebug() << __FUNCTION__;
+
     delete screenPixmap;
 }
 
-//void PageView::setBook(boost::intrusive_ptr<RProto::IBook>  book)
-//{
-//    if(book == nullptr)
-//        return;
+void PageView::setBook(RProto::IBook*  bk)
+{
+    book = bk;
+    if(book == nullptr)
+        return;
 
-//    layout = book->createLayout();
-//    renderer = book->createRenderer();
-//    connect(layout->qobject(), SIGNAL(layoutChanged(int,QSize)), this, SLOT(onLayoutChanged(int,QSize)));
-//    update();
-//}
+    auto dpiX = QApplication::desktop()->physicalDpiX();
+    auto dpiY = QApplication::desktop()->physicalDpiY();
+
+    layout = book->createLayout(dpiX, dpiY);
+    renderer = book->createRenderer();
+
+    //connect(layout->qobject(), SIGNAL(pageSizeChanged(int,QSize)), this, SLOT(onLayoutChanged(int,QSize)));
+    connect(layout->qobject(),
+            SIGNAL(pageSizeChanged(int,QSize)), this,
+            SLOT(onLayoutChanged(int,QSize)),
+            Qt::QueuedConnection);
+
+    layout->startLayouting();
+    currentPage = 0;
+    currentOffset = QPoint(0,0);
+    updateScrollBars();
+    updateViewport();
+}
 
 void PageView::pageUp()
 {
+    if(layout == nullptr)
+        return;
+
+    if(viewport()->height() < layout->pageSize().height()){
+        auto oldY = currentOffset.y();
+        auto newY = std::max(0, oldY-viewport()->height());
+        if(oldY != newY){
+            verticalScrollBar()->setValue(newY);
+            return;
+        }
+    }
+
+    auto newPage = std::max(0, currentPage-1);
+    if(newPage != currentPage){
+        currentPage = newPage;
+        auto y = std::max(0, layout->pageSize(currentPage).height()-viewport()->height());
+        currentOffset.setY(y);
+        updateScrollBars();
+        updateViewport();
+        clearPage = true;
+        viewport()->update();
+    }
 }
 
 void PageView::pageDown()
 {
-    currentPage = std::max(0, currentPage-1);
-    update();
+    if(layout == nullptr)
+        return;
+
+    if(viewport()->height() < layout->pageSize().height()){
+        auto oldY = currentOffset.y();
+        auto newY = std::min(layout->pageSize().height()-viewport()->height()
+                               , oldY+viewport()->height());
+        if(oldY != newY){
+            verticalScrollBar()->setValue(newY);
+            return;
+        }
+    }
+
+    auto newPage = std::min(currentPage+1, layout->pages()-1);
+    if(newPage != currentPage){
+        currentPage = newPage;
+        currentOffset.setY(0);
+        updateScrollBars();
+        updateViewport();
+        clearPage = true;
+        viewport()->update();
+    }
 }
 
 void PageView::resizeEvent(QResizeEvent* event)
 {
-    //qDebug() << __FUNCTION__;
-    delete screenPixmap;
-
+    qDebug() << __FUNCTION__;
     updateScrollBars();
-
-    screenPixmap = new QPixmap(event->size());
-    screenPixmap->fill(Qt::gray);
-
-//    if(renderer ==nullptr) return;
-
-//    QRect rect(QPoint(0,0), event->size());
-//    QImage img = renderer->renderRect(0, rect);
-//    {
-//        QPainter painter(screenPixmap);
-//        painter.drawImage(0,0, img);
-//    }
 }
 
 bool PageView::viewportEvent(QEvent* event)
@@ -128,62 +175,101 @@ bool PageView::viewportEvent(QEvent* event)
 
 void PageView::viewportPaintEvent(QPaintEvent * event)
 {
-    if( screenPixmap == NULL )
-        return;
+    qDebug() << __FUNCTION__;
+
+    if( screenPixmap == NULL
+            || clearPage){
+        QPainter    painter(viewport());
+        painter.fillRect(event->rect(), Qt::gray);
+        if(!clearPage)
+            return;
+        clearPage = false;
+    }
 
     QPainter    painter(viewport());
-    painter.drawPixmap(event->rect(), *screenPixmap, event->rect());
+    auto dx = std::max(0, (viewport()->width()-screenPixmap->width())/2);
+    auto dy = std::max(0, (viewport()->height()-screenPixmap->height())/2);
+    auto dstRect = event->rect();
+    dstRect.moveTo(dx, dy);
+    auto srcRect = event->rect();
+    srcRect.moveTo(currentOffset);
+    painter.drawPixmap(dstRect, *screenPixmap, srcRect);
 }
 
 void PageView::onScrollBarValueChanged(int /*value*/)
 {
-    //qDebug() << __FUNCTION__;
+    qDebug() << __FUNCTION__;
 
     QPoint offset(horizontalScrollBar()->value(),
                            verticalScrollBar()->value());
     if(currentOffset != offset){
         currentOffset = offset;
-        updateViewport();
+        viewport()->update();
     }
 }
 
 void PageView::onLayoutChanged(int page, QSize /*size*/)
 {
+    qDebug() << __FUNCTION__;
+
     if(currentPage == page){
         updateScrollBars();
+        updateViewport();
     }
 }
 
 void PageView::updateViewport()
 {
-    QRect rect(currentOffset, viewport()->size());
-//    QImage img = renderer->renderRect(currentPage, rect);
-//    {
-//        QPainter painter(screenPixmap);
-//        painter.drawImage(0,0, img);
-//    }
+    if(layout == nullptr)
+        return;
+
+    delete screenPixmap;
+    screenPixmap = new QPixmap(layout->pageSize(currentPage));
+    screenPixmap->fill(Qt::gray);
+
+    auto lrect = layout->createRect(currentPage,
+                                     0, 0,
+                                     viewport()->size().width(), viewport()->size().height());
+    lrect->addRef();
+    auto tile = renderer->renderRect(lrect);
+
+    assert(tile != nullptr);
+    tile->addRef();
+
+    RProto::IRect *r = nullptr;
+    tile->QueryInterface(RProto::IRect::iid, (void**)&r);
+    QImage img = QImage((const unsigned char*)tile->data(),
+                        r->width(), r->height()
+                        ,QImage::Format_RGB32);
+    {
+        QPainter painter(screenPixmap);
+        painter.drawImage(0, 0, img, 0,0, r->width(), r->height());
+    }
+
+    lrect->release();
+    tile->release();
 }
 
 void PageView::updateScrollBars()
 {
-//    if(layout == nullptr)
-//        return;
+    if(layout == nullptr)
+        return;
 
-//    QSize size = layout->pageSize(currentPage);
-//    verticalScrollBar()->setPageStep(viewport()->size().height());
-//    horizontalScrollBar()->setPageStep(viewport()->size().width());
+    QSize size = layout->pageSize(currentPage);
+    verticalScrollBar()->setPageStep(viewport()->size().height());
+    horizontalScrollBar()->setPageStep(viewport()->size().width());
 
-//    verticalScrollBar()->setRange(0, size.height() - viewport()->size().height());
-//    //verticalScrollBar()->setValue(currentPage->offset().y());
-//    if(size.height() <= viewport()->size().height())
-//        verticalScrollBar()->setVisible(false);
-//    else
-//        verticalScrollBar()->setVisible(true);
+    verticalScrollBar()->setRange(0, size.height() - viewport()->size().height());
+    verticalScrollBar()->setValue(currentOffset.y());
+    if(size.height() <= viewport()->size().height())
+        verticalScrollBar()->setVisible(false);
+    else
+        verticalScrollBar()->setVisible(true);
 
-//    horizontalScrollBar()->setRange(0, size.width() - viewport()->size().width());
-//    //horizontalScrollBar()->setValue(currentPage->offset().x());
-//    if(size.width() <= viewport()->size().width())
-//        horizontalScrollBar()->setVisible(false);
-//    else
-//        horizontalScrollBar()->setVisible(true);
+    horizontalScrollBar()->setRange(0, size.width() - viewport()->size().width());
+    horizontalScrollBar()->setValue(currentOffset.x());
+    if(size.width() <= viewport()->size().width())
+        horizontalScrollBar()->setVisible(false);
+    else
+        horizontalScrollBar()->setVisible(true);
 }

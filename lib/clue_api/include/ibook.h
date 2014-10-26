@@ -12,7 +12,7 @@ class IBook : public COM::IUnknown
 public:
     virtual ~IBook(){}
 
-    virtual ILayout* createLayout() =0;
+    virtual ILayout* createLayout(double dpix, double dpiy) =0;
     virtual IRenderer* createRenderer() =0;
 
     static std::string iid;

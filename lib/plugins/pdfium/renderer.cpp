@@ -3,8 +3,11 @@
 #include <iinternallayout.h>
 #include <irect.h>
 #include <ilayout.h>
+#include <book.h>
 #include <fpdfview.h>
 
+#include <assert.h>
+#include <QDebug>
 
 /**
 flags -
@@ -20,8 +23,14 @@ rotate - Page orientation: 0 (normal), 1 (rotated 90 degrees clockwise),
     2 (rotated 180 degrees), 3 (rotated 90 degrees counter-clockwise).
  */
 
-Renderer::Renderer()
+Renderer::Renderer(Book *b)
+    :bookOwner(b)
 {
+    assert(bookOwner != nullptr);
+}
+
+Renderer::~Renderer(){
+    qDebug() << __FUNCTION__;
 }
 
 COM::HResult Renderer::QueryInterface(const std::string &id, void **ppv)
@@ -37,8 +46,8 @@ COM::HResult Renderer::QueryInterface(const std::string &id, void **ppv)
 RProto::IImageTile* Renderer::renderRect(RProto::IRect *rect)
 {
     IInternalLayout *lay;
-    auto err = rect->layout()->QueryInterface(IInternalLayout::iid, (void**)&lay);
-    if(err.fail() || lay == nullptr)
+    /*auto err =*/ rect->layout()->QueryInterface(IInternalLayout::iid, (void**)&lay);
+    if(lay == nullptr)
         return nullptr;
 
     auto size = rect->layout()->pageSize(rect->page());
@@ -46,10 +55,15 @@ RProto::IImageTile* Renderer::renderRect(RProto::IRect *rect)
                   rect->x(), rect->y(),
                   size.width(), size.height() );
 
-    auto pdescr = lay->getPageDescr(rect->page());
-    FPDF_RenderPageBitmap( tile->pdfBitmap(), pdescr.pdf_page,
-                          rect->x(),  rect->y(),
+//    auto pdescr = lay->getPageDescr(rect->page());
+//    qDebug() << rect->x() << rect->y() << size
+//             << pdescr.pdf_page << tile->pdfBitmap();
+    FPDF_PAGE pdf_page = FPDF_LoadPage(bookOwner->document(), rect->page());
+    FPDF_RenderPageBitmap( tile->pdfBitmap(), pdf_page,
+                          0, 0,
                           size.width(), size.height(),
-                          0/*rotate*/, 0x183 /*falgs*/);
+                          0/*rotate*/, 0x183/*falgs*/);
+    FPDF_ClosePage(pdf_page);
+
     return tile;
 }

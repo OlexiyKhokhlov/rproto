@@ -2,9 +2,9 @@
 
 #include <QPoint>
 #include <QAbstractScrollArea>
-//#include <ibook.h>
-//#include <ilayout.h>
-//#include <irenderer.h>
+#include <ibook.h>
+#include <ilayout.h>
+#include <irenderer.h>
 
 class QPixmap;
 
@@ -15,7 +15,7 @@ public:
     explicit PageView(QWidget *parent = 0);
     virtual ~PageView();
 
-    //void setBook(boost::intrusive_ptr<RProto::IBook>  book);
+    void setBook(RProto::IBook*  book);
 
 public slots:
     void pageUp();
@@ -34,10 +34,12 @@ private:
    void updateViewport();
    void updateScrollBars();
 
-//    boost::intrusive_ptr<RProto::ILayout> layout;
-//    boost::intrusive_ptr<RProto::IAsyncRenderer> renderer;
+    boost::intrusive_ptr<RProto::IBook>   book;
+    boost::intrusive_ptr<RProto::ILayout> layout;
+    boost::intrusive_ptr<RProto::IRenderer> renderer;
     QPixmap*    screenPixmap;
 
     int      currentPage;
-    QPoint      currentOffset;
+    QPoint   currentOffset;
+    bool    clearPage;
 };

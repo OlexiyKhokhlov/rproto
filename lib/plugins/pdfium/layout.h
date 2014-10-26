@@ -5,13 +5,18 @@
 #include <com/basecomponent.h>
 #include <fpdfview.h>
 #include <vector>
+#include <thread>
+
+#include <QObject>
 
 class Book;
 
-class Layout : public COM::BaseComponent, public RProto::ILayout, public IInternalLayout
+class Layout : public QObject, public COM::BaseComponent, public RProto::ILayout, public IInternalLayout
 {
+    Q_OBJECT
+
 public:
-    explicit Layout(Book *book);
+    explicit Layout(Book *book, double dpix, double dpiy);
     virtual ~Layout();
 
     //Iunknown interface
@@ -25,6 +30,8 @@ public:
 
     //ILayout interface
     virtual RProto::IBook* book() override;
+    virtual void startLayouting() override;
+    virtual void cancelLayouting() override;
     virtual int pages()const override;
     virtual QSize pageSize(int rpage=0)const override;
     virtual double pageZoom(int rpage=0)const override;
@@ -39,8 +46,16 @@ public:
     //IInternalLayout interface
     virtual IInternalLayout::PageDescriptor& getPageDescr(int rpage=0) override;
 
+signals:
+    void pageCountChanged(int);
+    void pageSizeChanged(int page, QSize size);
+
 private:
     Book *bookOwner;
     double dpiX, dpiY;
     std::vector<IInternalLayout::PageDescriptor> page_vector;
+    volatile bool stopLayouting;
+    std::thread thread;
+
+    void createPages();
 };

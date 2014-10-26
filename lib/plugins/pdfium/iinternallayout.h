@@ -7,6 +7,7 @@ class IInternalLayout : public COM::IUnknown
 {
 public:
     struct PageDescriptor{
+        bool isValid;
         FPDF_PAGE  pdf_page;
         double zoom;
     };

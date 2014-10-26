@@ -1,12 +1,18 @@
 #include <book.h>
 #include <assert.h>
 
+#include <layout.h>
+#include <renderer.h>
+
+#include <QDebug>
+
 Book::Book(FPDF_DOCUMENT doc)
     :pdf_doc(doc)
 {}
 
 Book::~Book()
 {
+    qDebug() << __FUNCTION__;
     FPDF_CloseDocument(pdf_doc);
 }
 
@@ -22,12 +28,12 @@ COM::HResult Book::QueryInterface(const std::string& id, void** ppv)
 }
 
 //IBook interface
-RProto::ILayout* Book::createLayout()
+RProto::ILayout* Book::createLayout(double dpix, double dpiy)
 {
-    return nullptr;
+    return new Layout(this, dpix, dpiy);
 }
 
 RProto::IRenderer* Book::createRenderer()
 {
-    return nullptr;
+    return new Renderer(this);
 }

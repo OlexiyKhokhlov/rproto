@@ -3,15 +3,15 @@
 
 #include <util/singletone.h>
 //#include <bookfactory.h>
-//#include <djvuplugin.h>
-//#include <djvubook.h>
-//#include <djvupagelayout.h>
+#include <ibook.h>
+#include "../lib/plugins/pdfium/plugin.h"
 
 //#include <g3log/g2log.hpp>
 
 #include <QSettings>
 #include <QFileDialog>
 #include <QAction>
+#include <QDebug>
 
 MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
     QMainWindow(parent, flags)
@@ -49,6 +49,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
 
 MainWindow::~MainWindow()
 {
+    qDebug() << __FUNCTION__;
     //delete bookFactory;
 }
 
@@ -73,13 +74,17 @@ void MainWindow::onOpenFile()
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Open File"),
                                                     "",
-                                                    tr("Book Files (%1)").arg("*.djvu"),
+                                                    tr("Book Files (%1)").arg("*.pdf"),
                                                     0,
                                                     QFileDialog::DontUseNativeDialog );
     if(fileName.isEmpty())
       return;
 
+    Plugin *pl = new Plugin();
+
+    auto book = pl->createBook(fileName);
+
 //    LOG(INFO) << "Start open file" << fileName;
 //    auto book = bookFactory->createBook(fileName);
-//    pageView->setBook(book);
+    pageView->setBook(book);
 }

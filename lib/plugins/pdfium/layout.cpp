@@ -6,33 +6,26 @@
 
 #include <fpdfview.h>
 
-#include <QGuiApplication>
-#include <QScreen>
+#include <QDebug>
 
-Layout::Layout(Book *b)
+Layout::Layout(Book *b, double dpix, double dpiy)
     :bookOwner(b)
+    ,dpiX(dpix)
+    ,dpiY(dpiy)
+    ,stopLayouting(false)
 {
     assert(bookOwner != nullptr);
-
-    auto screens = QGuiApplication::screens();
-    assert(screens.size() != 0);
-
-    auto fisrt_screen = screens.first();
-    dpiX = fisrt_screen->physicalDotsPerInchX();
-    dpiY = fisrt_screen->physicalDotsPerInchY();
-
-    auto page_count = FPDF_GetPageCount(bookOwner->document());
-    page_vector.reserve(page_count);
-    for(int i=0; i<page_count; ++i){
-        IInternalLayout::PageDescriptor pg={FPDF_LoadPage(bookOwner->document(),i),1};
-        page_vector.push_back(pg);
-    }
 }
 
 Layout::~Layout()
 {
+    qDebug() << __FUNCTION__;
+
+    stopLayouting = true;
+    //thread.join();
     for(auto pg : page_vector){
-        FPDF_ClosePage(pg.pdf_page);
+        if(pg.isValid)
+            FPDF_ClosePage(pg.pdf_page);
     }
 }
 
@@ -58,6 +51,26 @@ RProto::IBook* Layout::book(){
     return (RProto::IBook*)bookOwner;
 }
 
+void Layout::startLayouting(){
+    stopLayouting = false;
+    auto page_count = FPDF_GetPageCount(bookOwner->document());
+    page_vector.reserve(page_count);
+
+    for(int i=0; i<page_count; ++i){
+        IInternalLayout::PageDescriptor pg={false, 0, 1};
+        page_vector.push_back(pg);
+    }
+
+    emit pageCountChanged(page_count);
+
+    //thread = std::thread(&Layout::createPages, this);
+    //thread.join();
+}
+
+void Layout::cancelLayouting(){
+    stopLayouting = true;
+}
+
 int Layout::pages()const
 {
     return page_vector.size();
@@ -65,10 +78,15 @@ int Layout::pages()const
 
 QSize Layout::pageSize(int rpage)const
 {
-    double width, height;
-    auto err = FPDF_GetPageSizeByIndex(bookOwner->document(), rpage, &width, &height);
-    if(err == 0)
+    if((std::size_t)rpage >= page_vector.size())
         return QSize();
+
+//    double width  = FPDF_GetPageWidth(page_vector[rpage].pdf_page);
+//    double height = FPDF_GetPageHeight(page_vector[rpage].pdf_page);
+
+    double width=0;
+    double height=0;
+    FPDF_GetPageSizeByIndex(bookOwner->document(), rpage, &width, &height);
 
     width = width/72*dpiX;
     height = height/72*dpiY;
@@ -96,7 +114,7 @@ void Layout::setPageZoom(int rpage, double zoom)
 
 void Layout::setDocumentZoom(double zoom)
 {
-    for(auto pg : page_vector){
+    for(IInternalLayout::PageDescriptor& pg : page_vector){
         pg.zoom = zoom;
     }
 }
@@ -121,9 +139,21 @@ RProto::IRect* Layout::createRect(int rpage, int x, int y, int width, int height
 
 QObject* Layout::qobject()
 {
-    return nullptr;
+    return (QObject*)this;
 }
 
 IInternalLayout::PageDescriptor& Layout::getPageDescr(int rpage){
     return page_vector[rpage];
+}
+
+void Layout::createPages(){
+    size_t i=0;
+    for(IInternalLayout::PageDescriptor& pd : page_vector){
+        if(stopLayouting)
+            break;
+        pd.pdf_page = FPDF_LoadPage(bookOwner->document(), i);
+        pd.isValid = true;
+        emit pageSizeChanged(i, pageSize(i));
+        ++i;
+    }
 }

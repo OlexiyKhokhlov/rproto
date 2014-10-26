@@ -3,10 +3,13 @@
 #include <com/basecomponent.h>
 #include <irenderer.h>
 
+class Book;
+
 class Renderer : public COM::BaseComponent, public RProto::IRenderer
 {
 public:
-    Renderer();
+    explicit Renderer(Book *book);
+    virtual ~Renderer();
 
     // IUnknown interface
     virtual int addRef() override{
@@ -19,6 +22,9 @@ public:
 
     // IRenderer interface
     virtual RProto::IImageTile* renderRect(RProto::IRect *rect) override;
+
+private:
+        Book *bookOwner;
 };
 
 

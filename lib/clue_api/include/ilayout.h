@@ -17,6 +17,8 @@ public:
     virtual ~ILayout(){}
 
     virtual RProto::IBook* book() =0;
+    virtual void startLayouting() =0;
+    virtual void cancelLayouting() =0;
     virtual int pages()const =0;
     virtual QSize pageSize(int rpage=0)const =0;
     virtual double pageZoom(int rpage=0)const =0;
