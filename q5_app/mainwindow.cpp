@@ -4,7 +4,7 @@
 #include <util/singletone.h>
 //#include <bookfactory.h>
 #include <ibook.h>
-#include "../lib/plugins/pdfium/plugin.h"
+#include "../lib/plugins/pdfium/src/plugin.h"
 
 //#include <g3log/g2log.hpp>
 

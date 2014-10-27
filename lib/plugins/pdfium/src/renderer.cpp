@@ -62,7 +62,7 @@ RProto::IImageTile* Renderer::renderRect(RProto::IRect *rect)
     FPDF_RenderPageBitmap( tile->pdfBitmap(), pdf_page,
                           0, 0,
                           size.width(), size.height(),
-                          0/*rotate*/, 0x183/*falgs*/);
+                          0/*rotate*/, /*0x183*/0/*falgs*/);
     FPDF_ClosePage(pdf_page);
 
     return tile;
