@@ -12,6 +12,9 @@ add_definitions(-DBUILDING_DLL)
 #find_package(g3log REQUIRED)
 #include_directories(${G3LOG_INCLUDE_DIRS})
 
+find_package(Boost REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
+
 find_package(JPEG REQUIRED)
 #include_directories(${JPEG_INCLUDE_DIRS})
 find_package(ZLIB REQUIRED)
@@ -21,16 +24,8 @@ find_package(LCMS2 REQUIRED)
 find_package(OpenJpeg REQUIRED)
 #include_directories(${OPENJPEG_INCLUDE_DIR})
 
-if(USE_QT4)
-    find_package(Qt4 REQUIRED)
-    INCLUDE(${QT_USE_FILE})
-    ADD_DEFINITIONS(${QT_DEFINITIONS})
-else(USE_QT4)
-    find_package(Qt5Core REQUIRED)
-    find_package(Qt5Gui REQUIRED)
-endif(USE_QT4)
-
 set(HEADERS
+    src/library.h
     src/plugin.h
     src/point.h
     src/rect.h
@@ -42,6 +37,7 @@ set(HEADERS
 )
 
 set(SOURCES
+    src/library.cpp
     src/plugin.cpp
     src/book.cpp
     src/layout.cpp
@@ -67,14 +63,6 @@ target_link_libraries(pdfiumglue
     ${OPENJPEG_LIBRARIES}
     clue_api
 )
-
-if(USE_QT4)
-    target_link_libraries(pdfiumglue
-     ${QT_LIBRARIES})
-else(USE_QT4)
-    qt5_use_modules(pdfiumglue Core Gui)
-endif(USE_QT4)
-
 
 include_directories(
     ${FUTIL_INCLUDE_DIR}

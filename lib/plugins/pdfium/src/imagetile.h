@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <com/basecomponent.h>
 #include <baserect.h>
 #include <iimagetile.h>
@@ -39,6 +40,7 @@ public:
 
     // IImageTile interface
     virtual const char* data()const override;
+    virtual const RProto::IRect* rect()const override;
 
     FPDF_BITMAP pdfBitmap(){
         return pdf_bitmap;
@@ -46,6 +48,16 @@ public:
 
 private:
     FPDF_BITMAP     pdf_bitmap;
-    RProto::BaseRect rect;
+    RProto::BaseRect imgRect;
 };
 
+namespace std {
+template<>
+struct hash<ImageTilePtr>{
+    typedef ImageTilePtr argument_type;
+    typedef std::size_t result_type;
+    result_type operator()(argument_type const& tile)const{
+        return std::hash<int>()(tile->rect()->page());
+    }
+};
+}

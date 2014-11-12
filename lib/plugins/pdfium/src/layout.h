@@ -5,16 +5,11 @@
 #include <com/basecomponent.h>
 #include <fpdfview.h>
 #include <vector>
-#include <thread>
-
-#include <QObject>
 
 class Book;
 
-class Layout : public QObject, public COM::BaseComponent, public RProto::ILayout, public IInternalLayout
+class Layout : public COM::BaseComponent, public RProto::ILayout, public IInternalLayout
 {
-    Q_OBJECT
-
 public:
     explicit Layout(Book *book, double dpix, double dpiy);
     virtual ~Layout();
@@ -33,7 +28,7 @@ public:
     virtual void startLayouting() override;
     virtual void cancelLayouting() override;
     virtual int pages()const override;
-    virtual QSize pageSize(int rpage=0)const override;
+    virtual std::pair<int,int> pageSize(int rpage=0)const override;
     virtual double pageZoom(int rpage=0)const override;
     virtual void setPageZoom(int rpage=0, double zoom=1) override;
     virtual void setDocumentZoom(double zoom=1) override;
@@ -41,21 +36,12 @@ public:
     //TODO create a point by link
     //virtual IPoint* createPoint(ILink *link)const override;
     virtual RProto::IRect* createRect(int rpage, int x, int y, int width, int height)const override;
-    virtual QObject* qobject() override;
 
     //IInternalLayout interface
     virtual IInternalLayout::PageDescriptor& getPageDescr(int rpage=0) override;
-
-signals:
-    void pageCountChanged(int);
-    void pageSizeChanged(int page, QSize size);
 
 private:
     Book *bookOwner;
     double dpiX, dpiY;
     std::vector<IInternalLayout::PageDescriptor> page_vector;
-    volatile bool stopLayouting;
-    std::thread thread;
-
-    void createPages();
 };

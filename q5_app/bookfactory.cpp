@@ -3,7 +3,6 @@
 #include <ibook.h>
 
 #include <QFileInfo>
-#include <QDebug>
 
 using namespace RProto;
 
@@ -23,9 +22,8 @@ bool BookFactory::registerPlugin(IPlugin* plug)
     if(plug == nullptr)
         return false;
 
-    qDebug() << plug->fileExtensions();
-    for(const QString& str : plug->fileExtensions()){
-        pluginTable.insert(str, plug);
+    for(const std::string& str : plug->fileExtensions()){
+        pluginTable.insert(str.data(), plug);
     }
     return true;
 }
@@ -41,7 +39,7 @@ IBook* BookFactory::createBook(const QString& path)
         auto it = pluginTable.find(finfo.completeSuffix());
         if(it != pluginTable.end()){
             IPlugin* plug = it.value();
-            return plug->createBook(path);
+            return plug->createBook(path.toLocal8Bit().constData());
         }
     }
     return nullptr;

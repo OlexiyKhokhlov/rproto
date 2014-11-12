@@ -24,9 +24,9 @@ public:
     }
 
     //IPlugin interface
-    virtual RProto::IBook* createBook(const QString& file) override;
-    virtual const QStringList& fileExtensions() override;
+    virtual RProto::IBook* createBook(const char* file) override;
+    virtual const std::vector<std::string>& fileExtensions() override;
 
 private:
-    QStringList extensions;
+    std::vector<std::string> extensions;
 };

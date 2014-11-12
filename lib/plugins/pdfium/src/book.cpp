@@ -4,15 +4,13 @@
 #include <layout.h>
 #include <renderer.h>
 
-#include <QDebug>
-
 Book::Book(FPDF_DOCUMENT doc)
     :pdf_doc(doc)
+    ,pageCache(1024*1024*128, 0.75f)
 {}
 
 Book::~Book()
 {
-    qDebug() << __FUNCTION__;
     FPDF_CloseDocument(pdf_doc);
 }
 

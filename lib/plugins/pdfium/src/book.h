@@ -1,6 +1,15 @@
 #include <com/basecomponent.h>
+#include <util/rlucache.h>
 #include <ibook.h>
 #include <fpdfview.h>
+#include <imagetile.h>
+
+template<>
+struct Weight<ImageTilePtr>{
+    int operator()(ImageTilePtr const& v){
+        return v->rect()->page();
+    }
+};
 
 class Book : public COM::BaseComponent, public RProto::IBook
 {
@@ -26,6 +35,12 @@ public:
         return pdf_doc;
     }
 
+//    RLUCache<ImageTilePtr>* cache(){
+//        return &pageCache;
+//    }
+
 private:
     FPDF_DOCUMENT pdf_doc;
+
+    RLUCache<int, ImageTilePtr>  pageCache;
 };

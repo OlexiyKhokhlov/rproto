@@ -2,7 +2,8 @@
 
 #include <com/basecomponent.h>
 #include <com/iunknown.h>
-#include <QStringList>
+#include <string>
+#include <vector>
 
 namespace RProto{
 class IBook;
@@ -13,8 +14,8 @@ public:
     virtual ~IPlugin(){}
     
     //IPlugin
-    virtual IBook* createBook(const QString& file) =0;
-    virtual const QStringList& fileExtensions() =0;
+    virtual IBook* createBook(const char* file) =0;
+    virtual const std::vector<std::string>& fileExtensions() =0;
 
     static std::string iid;
 };

@@ -6,23 +6,16 @@
 
 #include <fpdfview.h>
 
-#include <QDebug>
-
 Layout::Layout(Book *b, double dpix, double dpiy)
     :bookOwner(b)
     ,dpiX(dpix)
     ,dpiY(dpiy)
-    ,stopLayouting(false)
 {
     assert(bookOwner != nullptr);
 }
 
 Layout::~Layout()
 {
-    qDebug() << __FUNCTION__;
-
-    stopLayouting = true;
-    //thread.join();
     for(auto pg : page_vector){
         if(pg.isValid)
             FPDF_ClosePage(pg.pdf_page);
@@ -52,7 +45,6 @@ RProto::IBook* Layout::book(){
 }
 
 void Layout::startLayouting(){
-    stopLayouting = false;
     auto page_count = FPDF_GetPageCount(bookOwner->document());
     page_vector.reserve(page_count);
 
@@ -61,14 +53,11 @@ void Layout::startLayouting(){
         page_vector.push_back(pg);
     }
 
-    emit pageCountChanged(page_count);
-
-    //thread = std::thread(&Layout::createPages, this);
-    //thread.join();
+    //emit pageCountChanged(page_count);
 }
 
 void Layout::cancelLayouting(){
-    stopLayouting = true;
+
 }
 
 int Layout::pages()const
@@ -76,13 +65,10 @@ int Layout::pages()const
     return page_vector.size();
 }
 
-QSize Layout::pageSize(int rpage)const
+std::pair<int,int> Layout::pageSize(int rpage)const
 {
     if((std::size_t)rpage >= page_vector.size())
-        return QSize();
-
-//    double width  = FPDF_GetPageWidth(page_vector[rpage].pdf_page);
-//    double height = FPDF_GetPageHeight(page_vector[rpage].pdf_page);
+        return std::make_pair(-1,-1);
 
     double width=0;
     double height=0;
@@ -94,7 +80,7 @@ QSize Layout::pageSize(int rpage)const
     width *= page_vector[rpage].zoom;
     height *= page_vector[rpage].zoom;
 
-    return QSize((int)width, (int)height);
+    return std::make_pair((int)width, (int)height);
 }
 
 double Layout::pageZoom(int rpage)const
@@ -137,23 +123,6 @@ RProto::IRect* Layout::createRect(int rpage, int x, int y, int width, int height
     return new Rect((RProto::ILayout*)this, rpage, zoom, x, y, width, height);
 }
 
-QObject* Layout::qobject()
-{
-    return (QObject*)this;
-}
-
 IInternalLayout::PageDescriptor& Layout::getPageDescr(int rpage){
     return page_vector[rpage];
-}
-
-void Layout::createPages(){
-    size_t i=0;
-    for(IInternalLayout::PageDescriptor& pd : page_vector){
-        if(stopLayouting)
-            break;
-        pd.pdf_page = FPDF_LoadPage(bookOwner->document(), i);
-        pd.isValid = true;
-        emit pageSizeChanged(i, pageSize(i));
-        ++i;
-    }
 }

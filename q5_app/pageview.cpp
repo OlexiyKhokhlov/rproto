@@ -25,6 +25,7 @@ PageView::PageView(QWidget *parent) :
   ,currentPage(0)
   ,clearPage(false)
 {
+    viewport()->setAttribute(Qt::WA_OpaquePaintEvent);
     viewport()->setAttribute(Qt::WA_PaintOnScreen);
     viewport()->setAttribute(Qt::WA_NoSystemBackground);
     viewport()->setMouseTracking (true);
@@ -64,10 +65,10 @@ void PageView::setBook(RProto::IBook*  bk)
     renderer = book->createRenderer();
 
     //connect(layout->qobject(), SIGNAL(pageSizeChanged(int,QSize)), this, SLOT(onLayoutChanged(int,QSize)));
-    connect(layout->qobject(),
-            SIGNAL(pageSizeChanged(int,QSize)), this,
-            SLOT(onLayoutChanged(int,QSize)),
-            Qt::QueuedConnection);
+//    connect(layout->qobject(),
+//            SIGNAL(pageSizeChanged(int,QSize)), this,
+//            SLOT(onLayoutChanged(int,QSize)),
+//            Qt::QueuedConnection);
 
     layout->startLayouting();
     currentPage = 0;
@@ -81,7 +82,7 @@ void PageView::pageUp()
     if(layout == nullptr)
         return;
 
-    if(viewport()->height() < layout->pageSize().height()){
+    if(viewport()->height() < layout->pageSize().second){
         auto oldY = currentOffset.y();
         auto newY = std::max(0, oldY-viewport()->height());
         if(oldY != newY){
@@ -93,7 +94,7 @@ void PageView::pageUp()
     auto newPage = std::max(0, currentPage-1);
     if(newPage != currentPage){
         currentPage = newPage;
-        auto y = std::max(0, layout->pageSize(currentPage).height()-viewport()->height());
+        auto y = std::max(0, layout->pageSize(currentPage).second-viewport()->height());
         currentOffset.setY(y);
         updateScrollBars();
         updateViewport();
@@ -107,9 +108,9 @@ void PageView::pageDown()
     if(layout == nullptr)
         return;
 
-    if(viewport()->height() < layout->pageSize().height()){
+    if(viewport()->height() < layout->pageSize().second){
         auto oldY = currentOffset.y();
-        auto newY = std::min(layout->pageSize().height()-viewport()->height()
+        auto newY = std::min(layout->pageSize().second-viewport()->height()
                                , oldY+viewport()->height());
         if(oldY != newY){
             verticalScrollBar()->setValue(newY);
@@ -224,7 +225,8 @@ void PageView::updateViewport()
         return;
 
     delete screenPixmap;
-    screenPixmap = new QPixmap(layout->pageSize(currentPage));
+    auto sz = layout->pageSize(currentPage);
+    screenPixmap = new QPixmap(sz.first, sz.second);
     screenPixmap->fill(Qt::gray);
 
     auto lrect = layout->createRect(currentPage,
@@ -255,7 +257,8 @@ void PageView::updateScrollBars()
     if(layout == nullptr)
         return;
 
-    QSize size = layout->pageSize(currentPage);
+    auto sz = layout->pageSize(currentPage);
+    QSize size(sz.first, sz.second);
     verticalScrollBar()->setPageStep(viewport()->size().height());
     horizontalScrollBar()->setPageStep(viewport()->size().width());
 

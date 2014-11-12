@@ -1,3 +1,4 @@
+#include <util/singletone.h>
 #include <renderer.h>
 #include <imagetile.h>
 #include <iinternallayout.h>
@@ -5,9 +6,9 @@
 #include <ilayout.h>
 #include <book.h>
 #include <fpdfview.h>
+#include "library.h"
 
 #include <assert.h>
-#include <QDebug>
 
 /**
 flags -
@@ -30,7 +31,6 @@ Renderer::Renderer(Book *b)
 }
 
 Renderer::~Renderer(){
-    qDebug() << __FUNCTION__;
 }
 
 COM::HResult Renderer::QueryInterface(const std::string &id, void **ppv)
@@ -53,17 +53,18 @@ RProto::IImageTile* Renderer::renderRect(RProto::IRect *rect)
     auto size = rect->layout()->pageSize(rect->page());
     ImageTile* tile = new ImageTile( rect->layout(), rect->page(), rect->zoom(),
                   rect->x(), rect->y(),
-                  size.width(), size.height() );
+                  size.first, size.second );
 
 //    auto pdescr = lay->getPageDescr(rect->page());
 //    qDebug() << rect->x() << rect->y() << size
 //             << pdescr.pdf_page << tile->pdfBitmap();
+    Singletone<Library>::instance().BLL_lock();
     FPDF_PAGE pdf_page = FPDF_LoadPage(bookOwner->document(), rect->page());
     FPDF_RenderPageBitmap( tile->pdfBitmap(), pdf_page,
                           0, 0,
-                          size.width(), size.height(),
+                          size.first, size.second,
                           0/*rotate*/, /*0x183*/0/*falgs*/);
     FPDF_ClosePage(pdf_page);
-
+    Singletone<Library>::instance().BLL_unlock();
     return tile;
 }

@@ -4,19 +4,13 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+
 #find_package(g3log REQUIRED)
 #include_directories(${G3LOG_INCLUDE_DIRS})
 
-if(USE_QT4)
-    find_package(Qt4 REQUIRED)
-    INCLUDE(${QT_USE_FILE})
-    ADD_DEFINITIONS(${QT_DEFINITIONS})
-else(USE_QT4)
-    find_package(Qt5Core REQUIRED)
-endif(USE_QT4)
+find_package(Boost REQUIRED)
 
 set(HEADERS
-    include/bookfactory.h
     include/ipoint.h
     include/irect.h
     include/basepoint.h
@@ -30,7 +24,6 @@ set(HEADERS
 
 set(SOURCES
     ids.cpp
-    bookfactory.cpp
     basepoint.cpp
     baserect.cpp
 )
@@ -40,16 +33,12 @@ add_library(clue_api STATIC
     ${SOURCES}
 )
 
-#target_link_libraries(clue_api ${G3LOG_LIBRARIES})
-
-if(USE_QT4)
-    target_link_libraries(clue_api ${QT_LIBRARIES})
-else(USE_QT4)
-    qt5_use_modules(clue_api Core)
-endif(USE_QT4)
-
+target_link_libraries(clue_api
+    #${G3LOG_LIBRARIES}
+)
 
 include_directories(
+    ${Boost_INCLUDE_DIRS}
     ${FUTIL_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )

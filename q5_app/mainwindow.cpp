@@ -82,7 +82,7 @@ void MainWindow::onOpenFile()
 
     Plugin *pl = new Plugin();
 
-    auto book = pl->createBook(fileName);
+    auto book = pl->createBook(fileName.toLocal8Bit().constData());
 
 //    LOG(INFO) << "Start open file" << fileName;
 //    auto book = bookFactory->createBook(fileName);

@@ -1,16 +1,17 @@
+#include <util/singletone.h>
 #include <plugin.h>
 #include <book.h>
-#include <fpdfview.h>
+#include "library.h"
 
 Plugin::Plugin()
 {
-    FPDF_InitLibrary(nullptr);
-    extensions << "pdf";
+    Singletone<Library>::instance().Init();
+    extensions.push_back("pdf");
 }
 
 Plugin::~Plugin()
 {
-    FPDF_DestroyLibrary();
+    Singletone<Library>::instance().Close();
 }
 
 //Iunknown interface
@@ -25,16 +26,18 @@ COM::HResult Plugin::QueryInterface(const std::string& id, void** ppv)
 }
 
 //IPlugin interface
-RProto::IBook* Plugin::createBook(const QString& file)
+RProto::IBook* Plugin::createBook(const char* file)
 {
-    FPDF_DOCUMENT pdf_doc = FPDF_LoadDocument(file.toUtf8().constData(), nullptr);
+    Singletone<Library>::instance().BLL_lock();
+    FPDF_DOCUMENT pdf_doc = FPDF_LoadDocument(file, nullptr);
+    Singletone<Library>::instance().BLL_unlock();
     if(pdf_doc == nullptr)
         return nullptr;
 
     return new Book(pdf_doc);
 }
 
-const QStringList& Plugin::fileExtensions()
+const std::vector<std::string>& Plugin::fileExtensions()
 {
     return extensions;
 }
