@@ -1,45 +1,36 @@
 #pragma once
 
 #include <vector>
-#include <QObject>
-#include <QSet>
-
+#include <com/basecomponent.h>
+#include <ibook.h>
 #include <libdjvu/ddjvuapi.h>
 
-#include <ibook.h>
-#include <baseobject.h>
-
-namespace RProto {
-
 class DjVuPlugin;
-class ILayout;
-class IAsyncRenderer;
-class DjVuRenderer;
-class DjVuPageLayout;
-class DjVuListener;
+//class ILayout;
+//class DjVuPageLayout;
+//class DjVuListener;
 
-class DjVuBook : public QObject, public IBook, public BaseObject
+class DjVuBook : public COM::BaseComponent, public RProto::IBook
 {
-    Q_OBJECT
 public:
-    DjVuBook(RProto::DjVuPlugin *plugin, QObject* parent=nullptr);
+    DjVuBook(DjVuPlugin *plugin, ddjvu_document_t* doc);
     virtual ~DjVuBook();
 
-    //IUnknown
-    virtual size_t addRef();
-    virtual size_t release();
-    virtual HResult queryInterface(const QUuid& iid, void** interface);
+    //Iunknown interface
+    virtual COM::HResult QueryInterface(const std::string& id, void** ppv) override;
+    virtual int addRef(){
+        return COM::BaseComponent::addRef();
+    }
+    virtual int release() {
+        return COM::BaseComponent::release();
+    }
     
-    bool open(const QString& file);
-
     //IBook interface
-    virtual boost::intrusive_ptr<ILayout> createLayout();
-    //TODO: replace via queryInterface
-    virtual boost::intrusive_ptr<IAsyncRenderer> createRenderer();
+    virtual RProto::ILayout* createLayout(double dpix, double dpiy) override;
+    virtual RProto::IRenderer* createRenderer() override;
 
-    void layoutRemoved(DjVuPageLayout* layout);
 
-private slots:
+private:
     void error(const ddjvu_message_error_s*);
     void info(const ddjvu_message_info_s*);
     void newstream(const ddjvu_message_newstream_s*);
@@ -52,12 +43,6 @@ private slots:
     void progress(const ddjvu_message_progress_s *);
     
 private:
-    DjVuPlugin                 *owner;
-    DjVuRenderer            *renderer;
+    DjVuPlugin           *owner;
     ddjvu_document_t     *djvu_document;
-    std::vector<ddjvu_page_t*>  pages;
-    QSet<DjVuPageLayout*>   layouts;
-
-//    void doLayout();
 };
-}

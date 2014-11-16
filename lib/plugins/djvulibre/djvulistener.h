@@ -2,17 +2,14 @@
 
 #include <libdjvu/ddjvuapi.h>
 #include <libdjvu/miniexp.h>
-#include <QThread>
 
 namespace RProto{
 
-class DjVuListener : public QThread
+class DjVuListener
 {
-    Q_OBJECT
 public:
-    explicit DjVuListener(ddjvu_context_t *ctx, QObject *parent = 0);
+    explicit DjVuListener(ddjvu_context_t *ctx);
 
-signals:
     void error(const ddjvu_message_error_s*);
     void info(const ddjvu_message_info_s*);
     void newstream(const ddjvu_message_newstream_s*);
@@ -26,6 +23,7 @@ signals:
 
 protected:
     virtual void run();
+
 private:
     ddjvu_context_t *djvu_context;
 };

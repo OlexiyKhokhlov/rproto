@@ -61,7 +61,7 @@ target_link_libraries(pdfiumglue
     ${ZLIB_LIBRARIES}
     ${LCMS2_LIBRARIES}
     ${OPENJPEG_LIBRARIES}
-    clue_api
+    glue_api
 )
 
 include_directories(

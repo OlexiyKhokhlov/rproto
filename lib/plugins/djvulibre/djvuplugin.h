@@ -1,39 +1,43 @@
 #pragma once
 
+#include <util/visibility.h>
+#include <com/basecomponent.h>
 #include <iplugin.h>
-#include <baseobject.h>
+
 #include <libdjvu/ddjvuapi.h>
+#include <thread>
 
-namespace RProto{
-class DjVuListener;
+namespace RProto {
+    class IBook;
+}
 
-class DjVuPlugin : public IPlugin, public BaseObject
+class DLL_PUBLIC DjVuPlugin : public COM::BaseComponent, public RProto::IPlugin
 {
 public:
     DjVuPlugin();
     virtual ~DjVuPlugin();
 
-    //IUnknown
-    virtual size_t addRef();
-    virtual size_t release();
-    virtual HResult queryInterface(const QUuid& iid, void** interface);
-
-    //IPlugin
-    virtual const QString& name()const;
-    virtual boost::intrusive_ptr<IBook> createBook(const QString& file);
-    virtual const QStringList& fileExtensions();
-
-    inline ddjvu_context_t*  context(){
-        return djvu_context;
+    //Iunknown interface
+    virtual COM::HResult QueryInterface(const std::string& id, void** ppv) override;
+    virtual int addRef(){
+        return COM::BaseComponent::addRef();
+    }
+    virtual int release() {
+        return COM::BaseComponent::release();
     }
 
-    inline DjVuListener*  listener(){
-        return listenerThread;
-    }
+    //IPlugin interface
+    virtual RProto::IBook* createBook(const char* file) override;
+    virtual const std::vector<std::string>& fileExtensions() override;
+
+    //Plugin private
+//    void unregisterBook();
 
 private:
-    static QStringList extList;
+    std::vector<std::string> extensions;
     ddjvu_context_t     *djvu_context;
-    DjVuListener         *listenerThread;
+    volatile bool stopListener;
+    std::thread     message_thread;
+
+    void messageLoop();
 };
-}

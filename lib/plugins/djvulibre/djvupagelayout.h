@@ -1,42 +1,45 @@
 #pragma once
 
-#include <QRect>
-#include <QObject>
-
 #include <ilayout.h>
-#include <baseobject.h>
+#include <com/basecomponent.h>
 #include <libdjvu/ddjvuapi.h>
-
-namespace RProto{
 
 class DjVuBook;
 
-class DjVuPageLayout : public QObject, public BaseObject, public ILayout
+class DjVuPageLayout : public COM::BaseComponent, public RProto::ILayout
 {
-    Q_OBJECT
-
 public:
-  DjVuPageLayout(DjVuBook *book, ddjvu_document_t* document, QObject *parent=nullptr);
+  DjVuPageLayout(DjVuBook *book, ddjvu_document_t* document);
   virtual ~DjVuPageLayout();
 
-  //IUnknown
-  virtual size_t addRef();
-  virtual size_t release();
-  virtual HResult queryInterface(const QUuid& iid, void** interface);
+  //Iunknown interface
+  virtual COM::HResult QueryInterface(const std::string& id, void** ppv) override;
+  virtual int addRef(){
+      return COM::BaseComponent::addRef();
+  }
+  virtual int release() {
+      return COM::BaseComponent::release();
+  }
 
   //ILayout interface
-  virtual void setViewportSize(const QSize& sz);
-  virtual int pages()const;
-  virtual QSize pageSize(int rpage=0);
-  virtual QObject* qobject();
+  virtual void addListener(RProto::ILayoutListener *listener) override;
+  virtual RProto::IBook* book() override;
+  virtual void startLayouting() override;
+  virtual void cancelLayouting() override;
+  virtual int pages()const override;
+  virtual std::pair<int,int> pageSize(int rpage=0)const override;
+  virtual double pageZoom(int rpage=0)const override;
+  virtual void setPageZoom(int rpage=0, double zoom=1) override;
+  virtual void setDocumentZoom(double zoom=1) override;
+  virtual RProto::IPoint* createPoint(int rpage, int x, int y)const override;
+  //TODO create a point by link
+  //virtual IPoint* createPoint(ILink *link)const override;
+  virtual RProto::IRect* createRect(int rpage, int x, int y, int width, int height)const override;
 
-  void layoutChangedInternal(int,QSize);
+  //void layoutChangedInternal(int,QSize);
 
-signals:
-    void layoutChanged(int,QSize);
-  
 private:
   DjVuBook  *owner;
   ddjvu_document_t*     djvu_document;
+  RProto::ILayoutListener *listenerPtr;
 };
-}

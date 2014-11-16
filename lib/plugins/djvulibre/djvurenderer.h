@@ -1,7 +1,7 @@
 #pragma once
 
 #include <irenderer.h>
-#include <baseobject.h>
+#include <com/basecomponent.h>
 #include <libdjvu/ddjvuapi.h>
 
 namespace RProto{

@@ -28,12 +28,12 @@ set(SOURCES
     baserect.cpp
 )
 
-add_library(clue_api STATIC
+add_library(glue_api STATIC
     ${HEADERS}
     ${SOURCES}
 )
 
-target_link_libraries(clue_api
+target_link_libraries(glue_api
     #${G3LOG_LIBRARIES}
 )
 

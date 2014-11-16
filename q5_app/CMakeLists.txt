@@ -49,4 +49,5 @@ include_directories(
 
 target_link_libraries(reader
     pdfiumglue
+    djvuglue
 )
