@@ -24,6 +24,23 @@ rotate - Page orientation: 0 (normal), 1 (rotated 90 degrees clockwise),
     2 (rotated 180 degrees), 3 (rotated 90 degrees counter-clockwise).
  */
 
+
+/*
+// Page rendering flags. They can be combined with bit OR.
+#define FPDF_ANNOT			0x01		// Set if annotations are to be rendered.
+#define FPDF_LCD_TEXT		0x02		// Set if using text rendering optimized for LCD display.
+#define FPDF_NO_NATIVETEXT	0x04		// Don't use the native text output available on some platforms
+#define FPDF_GRAYSCALE		0x08		// Grayscale output.
+#define FPDF_DEBUG_INFO		0x80		// Set if you want to get some debug info.
+                                        // Please discuss with Foxit first if you need to collect debug info.
+#define FPDF_NO_CATCH		0x100		// Set if you don't want to catch exception.
+#define FPDF_RENDER_LIMITEDIMAGECACHE	0x200	// Limit image cache size.
+#define FPDF_RENDER_FORCEHALFTONE		0x400	// Always use halftone for image stretching.
+#define FPDF_PRINTING		0x800	// Render for printing.
+#define FPDF_REVERSE_BYTE_ORDER		0x10		//set whether render in a reverse Byte order, this flag only
+                                                //enable when render to a bitmap.
+*/
+
 Renderer::Renderer(Book *b)
     :bookOwner(b)
 {
@@ -43,28 +60,31 @@ COM::HResult Renderer::QueryInterface(const std::string &id, void **ppv)
     return COM::BaseComponent::QueryInterface(id, ppv);
 }
 
-RProto::IImageTile* Renderer::renderRect(RProto::IRect *rect)
+ImageTilePtr Renderer::renderRect(RProto::IRect *rect)
 {
-    IInternalLayout *lay;
-    /*auto err =*/ rect->layout()->QueryInterface(IInternalLayout::iid, (void**)&lay);
-    if(lay == nullptr)
+    auto pdf_page_ptr = bookOwner->getPage(rect->page());
+    if(pdf_page_ptr == nullptr)
         return nullptr;
 
-    auto size = rect->layout()->pageSize(rect->page());
     ImageTile* tile = new ImageTile( rect->layout(), rect->page(), rect->zoom(),
-                  rect->x(), rect->y(),
-                  size.first, size.second );
+                  rect->x()*rect->zoom(), rect->y()*rect->zoom(),
+                  rect->width()*rect->zoom(), rect->height()*rect->zoom() );
 
-//    auto pdescr = lay->getPageDescr(rect->page());
-//    qDebug() << rect->x() << rect->y() << size
-//             << pdescr.pdf_page << tile->pdfBitmap();
+    auto size = rect->layout()->pageSize(rect->page());
+    auto zoom = rect->zoom();
     Singletone<Library>::instance().BLL_lock();
-    FPDF_PAGE pdf_page = FPDF_LoadPage(bookOwner->document(), rect->page());
-    FPDF_RenderPageBitmap( tile->pdfBitmap(), pdf_page,
+    FPDF_RenderPageBitmap( tile->pdfBitmap(), pdf_page_ptr->pdf_page,
                           0, 0,
-                          size.first, size.second,
-                          0/*rotate*/, /*0x183*/0/*falgs*/);
-    FPDF_ClosePage(pdf_page);
+                          size.first*zoom, size.second*zoom,
+                          0/*rotate*/, /*0x183*/0x0/*falgs*/);
     Singletone<Library>::instance().BLL_unlock();
     return tile;
+}
+
+ImageTilePtr Renderer::renderThumbnail(RProto::IRect* /*rect*/){
+    return nullptr;
+}
+
+void Renderer::addListener(RProto::IRendererListener* /*listener*/){
+
 }

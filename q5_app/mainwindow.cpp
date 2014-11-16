@@ -45,6 +45,16 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
     pageDown->setShortcut(QKeySequence(Qt::Key_PageDown));
     addAction(pageDown);
     connect(pageDown, SIGNAL(triggered(bool)), pageView, SLOT(pageDown()));
+
+    QAction* home = new QAction(tr("&home"), this);
+    home->setShortcut(QKeySequence(Qt::Key_Home));
+    addAction(home);
+    connect(home, SIGNAL(triggered(bool)), pageView, SLOT(toHome()));
+
+    QAction* end = new QAction(tr("&end"), this);
+    end->setShortcut(QKeySequence(Qt::Key_End));
+    addAction(end);
+    connect(end, SIGNAL(triggered(bool)), pageView, SLOT(toEnd()));
 }
 
 MainWindow::~MainWindow()

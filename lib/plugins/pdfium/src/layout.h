@@ -24,6 +24,7 @@ public:
     }
 
     //ILayout interface
+    virtual void addListener(RProto::ILayoutListener *listener) override;
     virtual RProto::IBook* book() override;
     virtual void startLayouting() override;
     virtual void cancelLayouting() override;
@@ -44,4 +45,5 @@ private:
     Book *bookOwner;
     double dpiX, dpiY;
     std::vector<IInternalLayout::PageDescriptor> page_vector;
+    RProto::ILayoutListener *listenerPtr;
 };

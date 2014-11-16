@@ -4,8 +4,7 @@ ImageTile::ImageTile(RProto::ILayout *lay, int page, double zoom, int x, int y, 
     :imgRect(lay, page, zoom, x, y, width, height, (COM::BaseComponent*)this)
 {
     pdf_bitmap = FPDFBitmap_CreateEx(width, height, format, nullptr, 0);
-    //pdf_bitmap = FPDFBitmap_Create(width, height, 0);
-    FPDFBitmap_FillRect(pdf_bitmap, x, y, width, height, -1);
+    FPDFBitmap_FillRect(pdf_bitmap, 0, 0, width, height, -1);
 }
 
 ImageTile::~ImageTile()

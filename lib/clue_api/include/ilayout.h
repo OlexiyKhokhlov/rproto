@@ -10,16 +10,19 @@ class IPoint;
 class IRect;
 class IBook;
 
+class ILayoutListener{
+public:
+    virtual ~ILayoutListener(){}
+    virtual void onPageCountChanged(int page_count)=0;
+    virtual void onPageSizeChanged(int page, int width, int height)=0;
+};
+
 class ILayout : public COM::IUnknown
 {
 public:
-    enum Signal {
-        PAGE_COUNT_CHANGED, //onPageCountCHanged(int)
-        PAGE_SIZE_CHANGED //onPageSizeChanged(int page, int width, int height)
-    };
-
     virtual ~ILayout(){}
 
+    virtual void addListener(RProto::ILayoutListener *listener) =0;
     virtual RProto::IBook* book() =0;
     virtual void startLayouting() =0;
     virtual void cancelLayouting() =0;

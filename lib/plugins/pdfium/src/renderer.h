@@ -21,7 +21,9 @@ public:
     virtual COM::HResult QueryInterface(const std::string &, void **ppv) override;
 
     // IRenderer interface
-    virtual RProto::IImageTile* renderRect(RProto::IRect *rect) override;
+    virtual ImageTilePtr renderRect(RProto::IRect *rect) override;
+    virtual ImageTilePtr renderThumbnail(RProto::IRect* rect) override;
+    virtual void addListener(RProto::IRendererListener *listener) override;
 
 private:
         Book *bookOwner;

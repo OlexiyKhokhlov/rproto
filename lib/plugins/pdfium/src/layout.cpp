@@ -10,6 +10,7 @@ Layout::Layout(Book *b, double dpix, double dpiy)
     :bookOwner(b)
     ,dpiX(dpix)
     ,dpiY(dpiy)
+    ,listenerPtr(nullptr)
 {
     assert(bookOwner != nullptr);
 }
@@ -40,6 +41,10 @@ COM::HResult Layout::QueryInterface(const std::string& id, void** ppv)
 }
 
 //ILayout interface
+void Layout::addListener(RProto::ILayoutListener *listener){
+    listenerPtr = listener;
+}
+
 RProto::IBook* Layout::book(){
     return (RProto::IBook*)bookOwner;
 }
@@ -76,9 +81,6 @@ std::pair<int,int> Layout::pageSize(int rpage)const
 
     width = width/72*dpiX;
     height = height/72*dpiY;
-
-    width *= page_vector[rpage].zoom;
-    height *= page_vector[rpage].zoom;
 
     return std::make_pair((int)width, (int)height);
 }
