@@ -29,6 +29,8 @@ public:
     virtual RProto::ILayout* createLayout(double dpix, double dpiy) override;
     virtual RProto::IRenderer* createRenderer() override;
 
+    //Internal interface
+    void processMessage(const ddjvu_message_t *);
 
 private:
     void error(const ddjvu_message_error_s*);

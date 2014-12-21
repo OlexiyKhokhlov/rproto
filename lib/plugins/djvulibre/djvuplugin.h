@@ -5,11 +5,16 @@
 #include <iplugin.h>
 
 #include <libdjvu/ddjvuapi.h>
+#include <unordered_map>
 #include <thread>
+#include <mutex>
+#include <condition_variable>
 
 namespace RProto {
     class IBook;
 }
+
+class DjVuBook;
 
 class DLL_PUBLIC DjVuPlugin : public COM::BaseComponent, public RProto::IPlugin
 {
@@ -31,13 +36,18 @@ public:
     virtual const std::vector<std::string>& fileExtensions() override;
 
     //Plugin private
-//    void unregisterBook();
+    void removeBook(ddjvu_document_t* book);
 
 private:
     std::vector<std::string> extensions;
     ddjvu_context_t     *djvu_context;
-    volatile bool stopListener;
+    std::unordered_map<ddjvu_document_t*, DjVuBook*> bookTable;
+
     std::thread     message_thread;
+    std::mutex      msgMutex;
+    std::condition_variable msgConditional;
+    volatile bool stopListener;
 
     void messageLoop();
+    static void msg_callback(ddjvu_context_t *context, void *closure);
 };

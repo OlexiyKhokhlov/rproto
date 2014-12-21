@@ -24,6 +24,7 @@ DjVuBook::DjVuBook(DjVuPlugin *plugin, ddjvu_document_t* doc)
 
 DjVuBook::~DjVuBook()
 {
+  owner->removeBook(djvu_document);
   if(djvu_document != nullptr)
     ddjvu_document_release(djvu_document);
 
@@ -51,6 +52,10 @@ RProto::ILayout* DjVuBook::createLayout(double dpix, double dpiy)
 RProto::IRenderer* DjVuBook::createRenderer()
 {
     return nullptr;
+}
+
+void DjVuBook::processMessage(const ddjvu_message_t *msg){
+
 }
 
 //DjVu message handlers
