@@ -1,14 +1,15 @@
 #pragma once
 
-#include <vector>
-#include <com/basecomponent.h>
-#include <ibook.h>
 #include <libdjvu/ddjvuapi.h>
+#include <vector>
+#include <mutex>
+#include <memory>
+#include <com/basecomponent.h>
+#include <util/rlucache.h>
+#include <ibook.h>
 
 class DjVuPlugin;
-//class ILayout;
-//class DjVuPageLayout;
-//class DjVuListener;
+class DjVuPageLayout;
 
 class DjVuBook : public COM::BaseComponent, public RProto::IBook
 {
@@ -30,21 +31,39 @@ public:
     virtual RProto::IRenderer* createRenderer() override;
 
     //Internal interface
+    struct Page{
+        explicit Page(ddjvu_document_t *doc, int  num)
+            :djvu_page(nullptr)
+        {
+            djvu_page = ddjvu_page_create_by_pageno(doc, num);
+         }
+
+        ~Page(){
+            ddjvu_page_release(djvu_page);
+        }
+
+        ddjvu_page_t *djvu_page;
+    };
+
+    std::shared_ptr<DjVuBook::Page> getPage(int num);
     void processMessage(const ddjvu_message_t *);
 
 private:
-    void error(const ddjvu_message_error_s*);
-    void info(const ddjvu_message_info_s*);
-    void newstream(const ddjvu_message_newstream_s*);
-    void docinfo(const ddjvu_message_docinfo_s *);
-    void pageinfo(const ddjvu_message_pageinfo_s *);
-    void relayout(const ddjvu_message_relayout_s *);
-    void redisplay(const ddjvu_message_redisplay_s *);
-    void chunk(const ddjvu_message_chunk_s *);
-    void thumbnail(const ddjvu_message_thumbnail_s *);
-    void progress(const ddjvu_message_progress_s *);
+    void error(const ddjvu_message_t*);
+    void info(const ddjvu_message_t*);
+    void newstream(const ddjvu_message_t*);
+    void docinfo(const ddjvu_message_t *);
+    void pageinfo(const ddjvu_message_t *);
+    void relayout(const ddjvu_message_t *);
+    void redisplay(const ddjvu_message_t *);
+    void chunk(const ddjvu_message_t *);
+    void thumbnail(const ddjvu_message_t *);
+    void progress(const ddjvu_message_t *);
     
 private:
     DjVuPlugin           *owner;
     ddjvu_document_t     *djvu_document;
+    std::mutex cacheMutex;
+    RLUCache<int, std::shared_ptr<DjVuBook::Page> >  pageCache;
+    std::vector<DjVuPageLayout*>    layouts;
 };

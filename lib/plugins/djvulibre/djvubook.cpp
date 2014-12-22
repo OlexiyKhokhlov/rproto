@@ -1,25 +1,12 @@
 #include <djvubook.h>
 #include <djvuplugin.h>
-//#include <djvupagelayout.h>
-//#include <djvurenderer.h>
-//#include <djvulistener.h>
 
 DjVuBook::DjVuBook(DjVuPlugin *plugin, ddjvu_document_t* doc)
     :owner(plugin)
     ,djvu_document(doc)
+    ,pageCache(sizeof(std::shared_ptr<Page>)*10, 0.75f) //10 pages max
 {
     owner->addRef();
-
-//    connect(owner->listener(), SIGNAL(error(const ddjvu_message_error_s*)), this, SLOT(error(const ddjvu_message_error_s*)), Qt::BlockingQueuedConnection);
-//    connect(owner->listener(), SIGNAL(info(const ddjvu_message_info_s*)), this, SLOT(info(const ddjvu_message_info_s*)), Qt::BlockingQueuedConnection);
-//    connect(owner->listener(), SIGNAL(newstream(const ddjvu_message_newstream_s*)), this, SLOT(newstream(const ddjvu_message_newstream_s*)), Qt::BlockingQueuedConnection);
-//    connect(owner->listener(), SIGNAL(docinfo(const ddjvu_message_docinfo_s*)), this, SLOT(docinfo(const ddjvu_message_docinfo_s*)), Qt::BlockingQueuedConnection);
-//    connect(owner->listener(), SIGNAL(pageinfo(const ddjvu_message_pageinfo_s*)), this, SLOT(pageinfo(const ddjvu_message_pageinfo_s*)), Qt::BlockingQueuedConnection);
-//    connect(owner->listener(), SIGNAL(relayout(const ddjvu_message_relayout_s*)), this, SLOT(relayout(const ddjvu_message_relayout_s*)), Qt::BlockingQueuedConnection);
-//    connect(owner->listener(), SIGNAL(redisplay(const ddjvu_message_redisplay_s*)), this, SLOT(redisplay(const ddjvu_message_redisplay_s*)), Qt::BlockingQueuedConnection);
-//    connect(owner->listener(), SIGNAL(chunk(const ddjvu_message_chunk_s*)), this, SLOT(chunk(const ddjvu_message_chunk_s*)), Qt::BlockingQueuedConnection);
-//    connect(owner->listener(), SIGNAL(thumbnail(const ddjvu_message_thumbnail_s*)), this, SLOT(thumbnail(const ddjvu_message_thumbnail_s*)), Qt::BlockingQueuedConnection);
-//    connect(owner->listener(), SIGNAL(progress(const ddjvu_message_progress_s*)), this, SLOT(progress(const ddjvu_message_progress_s*)), Qt::BlockingQueuedConnection);
 }
 
 DjVuBook::~DjVuBook()
@@ -44,7 +31,7 @@ COM::HResult DjVuBook::QueryInterface(const std::string& id, void** ppv)
 }
 
 //IBook interface
-RProto::ILayout* DjVuBook::createLayout(double dpix, double dpiy)
+RProto::ILayout* DjVuBook::createLayout(double /*dpix*/, double /*dpiy*/)
 {
     return nullptr;
 }
@@ -55,88 +42,107 @@ RProto::IRenderer* DjVuBook::createRenderer()
 }
 
 void DjVuBook::processMessage(const ddjvu_message_t *msg){
+    switch(msg->m_any.tag){
+    case DDJVU_ERROR:
+        error(msg);
+        break;
+    case DDJVU_INFO:
+        info(msg);
+        break;
+    case DDJVU_NEWSTREAM:
+        newstream(msg);
+        break;
+    case DDJVU_DOCINFO:
+        docinfo(msg);
+        break;
+    case DDJVU_PAGEINFO:
+        pageinfo(msg);
+        break;
+    case DDJVU_RELAYOUT:
+        relayout(msg);
+        break;
+    case DDJVU_REDISPLAY:
+        redisplay(msg);
+        break;
+    case DDJVU_CHUNK:
+        chunk(msg);
+        break;
+    case DDJVU_THUMBNAIL:
+        thumbnail(msg);
+        break;
+    case DDJVU_PROGRESS:
+        progress(msg);
+        break;
+//    default:
 
+    }
 }
 
 //DjVu message handlers
-void DjVuBook::error(const ddjvu_message_error_s* msg)
+void DjVuBook::error(const ddjvu_message_t* msg)
 {
-    if(msg->any.document != djvu_document)
+    if(msg->m_any.document != djvu_document)
         return;
 }
 
-void DjVuBook::info(const ddjvu_message_info_s* msg)
+void DjVuBook::info(const ddjvu_message_t* msg)
 {
-    if(msg->any.document != djvu_document)
+    if(msg->m_any.document != djvu_document)
         return;
 }
 
-void DjVuBook::newstream(const ddjvu_message_newstream_s* msg)
+void DjVuBook::newstream(const ddjvu_message_t* msg)
 {
-    if(msg->any.document != djvu_document)
+    if(msg->m_any.document != djvu_document)
         return;
 }
 
-void DjVuBook::docinfo(const ddjvu_message_docinfo_s * msg)
+void DjVuBook::docinfo(const ddjvu_message_t * msg)
 {
-    if(msg->any.document != djvu_document)
+    if(msg->m_any.document != djvu_document)
+        return;
+    //notify all layouts
+}
+
+void DjVuBook::pageinfo(const ddjvu_message_t * msg)
+{
+    if(msg->m_any.document != djvu_document)
         return;
 
-    auto count = ddjvu_document_get_pagenum(djvu_document);
-//    pages.reserve(count);
-    auto page = ddjvu_page_create_by_pageno(djvu_document, 0);
-//    ddjvu_page_set_user_data(page, (void*)pages.size());
-//    pages.push_back(page);
+    for(DjVuPageLayout *layout : layouts){
+        //layout->layoutChangedInternal(page, QSize(info.width, info.height));
+    }
 }
 
-void DjVuBook::pageinfo(const ddjvu_message_pageinfo_s * msg)
+void DjVuBook::relayout(const ddjvu_message_t * msg)
 {
-//    if(msg->any.document != djvu_document)
-//        return;
-//    for(DjVuPageLayout *layout : layouts){
-//        void* ptr = ddjvu_page_get_user_data(msg->any.page);
-//        int page = *((int*)(&ptr));
-//        ddjvu_pageinfo_t info;
-//        ddjvu_document_get_pageinfo(djvu_document, page, &info);
-//        layout->layoutChangedInternal(page, QSize(info.width, info.height));
-//    }
-//    auto count = ddjvu_document_get_pagenum(djvu_document);
-//    if(pages.size() < count){
-//        auto page = ddjvu_page_create_by_pageno(djvu_document, pages.size());
-//        ddjvu_page_set_user_data(page, (void*)pages.size());
-//        pages.push_back(page);
-//    }
-}
-
-void DjVuBook::relayout(const ddjvu_message_relayout_s * msg)
-{
-    if(msg->any.document != djvu_document)
+    if(msg->m_any.document != djvu_document)
         return;
 //    qDebug() << (quint64)ddjvu_page_get_user_data(msg->any.page);
 }
 
-void DjVuBook::redisplay(const ddjvu_message_redisplay_s * msg)
+void DjVuBook::redisplay(const ddjvu_message_t * msg)
 {
-    if(msg->any.document != djvu_document)
+    if(msg->m_any.document != djvu_document)
         return;
 
 //    renderer->redisplay(msg);
 }
 
-void DjVuBook::chunk(const ddjvu_message_chunk_s * msg)
+void DjVuBook::chunk(const ddjvu_message_t * msg)
 {
-    if(msg->any.document != djvu_document)
+    if(msg->m_any.document != djvu_document)
         return;
 }
 
-void DjVuBook::thumbnail(const ddjvu_message_thumbnail_s * msg)
+void DjVuBook::thumbnail(const ddjvu_message_t * msg)
 {
-    if(msg->any.document != djvu_document)
+    if(msg->m_any.document != djvu_document)
         return;
 }
 
-void DjVuBook::progress(const ddjvu_message_progress_s *msg)
+void DjVuBook::progress(const ddjvu_message_t *msg)
 {
-    if(msg->any.document != djvu_document)
+    if(msg->m_any.document != djvu_document)
         return;
 }
