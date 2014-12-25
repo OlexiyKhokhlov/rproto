@@ -1,31 +1,23 @@
 #pragma once
 
-#include <libdjvu/ddjvuapi.h>
 #include <vector>
 #include <mutex>
 #include <memory>
-#include <com/basecomponent.h>
+#include <libdjvu/ddjvuapi.h>
+#include <core/co_class.h>
+#include <core/base.h>
 #include <util/rlucache.h>
 #include <ibook.h>
 
 class DjVuPlugin;
 class DjVuPageLayout;
 
-class DjVuBook : public COM::BaseComponent, public RProto::IBook
+class DjVuBook : public Boss::CoClass<Boss::MakeId("RProto.IBook"), RProto::IBook>
 {
 public:
     DjVuBook(DjVuPlugin *plugin, ddjvu_document_t* doc);
     virtual ~DjVuBook();
 
-    //Iunknown interface
-    virtual COM::HResult QueryInterface(const std::string& id, void** ppv) override;
-    virtual int addRef(){
-        return COM::BaseComponent::addRef();
-    }
-    virtual int release() {
-        return COM::BaseComponent::release();
-    }
-    
     //IBook interface
     virtual RProto::ILayout* createLayout(double dpix, double dpiy) override;
     virtual RProto::IRenderer* createRenderer() override;

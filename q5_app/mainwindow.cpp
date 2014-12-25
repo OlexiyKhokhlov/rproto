@@ -4,7 +4,7 @@
 #include <util/singletone.h>
 //#include <bookfactory.h>
 #include <ibook.h>
-#include "../lib/plugins/pdfium/src/plugin.h"
+//#include "../lib/plugins/pdfium/src/plugin.h"
 
 //#include <g3log/g2log.hpp>
 
@@ -90,11 +90,11 @@ void MainWindow::onOpenFile()
     if(fileName.isEmpty())
       return;
 
-    Plugin *pl = new Plugin();
+//    Plugin *pl = new Plugin();
 
-    auto book = pl->createBook(fileName.toLocal8Bit().constData());
+//    auto book = pl->createBook(fileName.toLocal8Bit().constData());
 
-//    LOG(INFO) << "Start open file" << fileName;
-//    auto book = bookFactory->createBook(fileName);
-    pageView->setBook(book);
+////    LOG(INFO) << "Start open file" << fileName;
+////    auto book = bookFactory->createBook(fileName);
+//    pageView->setBook(book);
 }

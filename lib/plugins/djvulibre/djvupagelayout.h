@@ -1,7 +1,6 @@
 #pragma once
 
 #include <ilayout.h>
-#include <com/basecomponent.h>
 #include <libdjvu/ddjvuapi.h>
 
 class DjVuBook;

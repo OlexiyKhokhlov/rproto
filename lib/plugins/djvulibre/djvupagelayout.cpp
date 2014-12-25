@@ -5,24 +5,13 @@ DjVuPageLayout::DjVuPageLayout(DjVuBook *book, ddjvu_document_t* document)
     :owner(book)
     ,djvu_document(document)
 {
-    owner->addRef();
+    owner->AddRef();
 }
 
 DjVuPageLayout::~DjVuPageLayout()
 {
     //owner->layoutRemoved(this);
-    owner->release();
-}
-
-//Iunknown interface
-COM::HResult DjVuPageLayout::QueryInterface(const std::string& id, void** ppv)
-{
-    if(id == RProto::ILayout::iid){
-        *ppv = (RProto::ILayout*)this;
-        return COM::HResult();
-    }
-
-    return COM::BaseComponent::QueryInterface(id, ppv);
+    owner->Release();
 }
 
 //void DjVuPageLayout::layoutChangedInternal(int page, QSize size)

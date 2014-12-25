@@ -44,10 +44,11 @@ endif(USE_QT4)
 
 include_directories(
     ${FUTIL_INCLUDE_DIR}
+    ${BOSS_INCLUDE_DIR}
     ${CLUE_API_INCLUDE_DIR}
 )
 
 target_link_libraries(reader
-    pdfiumglue
-    djvuglue
+#    pdfiumglue
+#    djvuglue
 )

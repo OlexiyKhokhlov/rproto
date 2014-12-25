@@ -2,7 +2,6 @@
 
 #include <QStringList>
 #include <QHash>
-#include <com/iunknown.h>
 
 namespace RProto{
 

@@ -23,12 +23,12 @@ public:
 
     //Iunknown interface
     virtual COM::HResult QueryInterface(const std::string& id, void** ppv) override;
-    virtual int addRef(){
-        return COM::BaseComponent::addRef();
-    }
-    virtual int release() {
-        return COM::BaseComponent::release();
-    }
+        virtual int addRef(){
+            return COM::BaseComponent::addRef();
+        }
+        virtual int release() {
+            return COM::BaseComponent::release();
+        }
 
     //IBook interface
     virtual RProto::ILayout* createLayout(double dpix, double dpiy) override;

@@ -2,6 +2,7 @@
 
 #include <QPoint>
 #include <QAbstractScrollArea>
+
 #include <ibook.h>
 #include <ilayout.h>
 #include <irenderer.h>
@@ -61,9 +62,9 @@ private:
    void updateViewport();
    void updateScrollBars();
 
-    boost::intrusive_ptr<RProto::IBook>   book;
-    boost::intrusive_ptr<RProto::ILayout> layout;
-    boost::intrusive_ptr<RProto::IRenderer> renderer;
+    IBookPtr   book;
+    ILayoutPtr layout;
+    IRendererPtr renderer;
     QList<ImageTilePtr>    tiles;
 
     PageFit  fitMode;

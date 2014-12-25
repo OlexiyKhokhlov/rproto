@@ -6,7 +6,7 @@ DjVuBook::DjVuBook(DjVuPlugin *plugin, ddjvu_document_t* doc)
     ,djvu_document(doc)
     ,pageCache(sizeof(std::shared_ptr<Page>)*10, 0.75f) //10 pages max
 {
-    owner->addRef();
+    owner->AddRef();
 }
 
 DjVuBook::~DjVuBook()
@@ -16,18 +16,7 @@ DjVuBook::~DjVuBook()
     ddjvu_document_release(djvu_document);
 
 //  delete renderer;
-  owner->release();
-}
-
-//Iunknown interface
-COM::HResult DjVuBook::QueryInterface(const std::string& id, void** ppv)
-{
-    if(id == RProto::IBook::iid){
-        *ppv = (RProto::IBook*)this;
-        return COM::HResult();
-    }
-
-    return COM::BaseComponent::QueryInterface(id, ppv);
+  owner->Release();
 }
 
 //IBook interface

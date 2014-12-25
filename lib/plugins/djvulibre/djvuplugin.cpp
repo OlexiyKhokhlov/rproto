@@ -22,26 +22,15 @@ DjVuPlugin::~DjVuPlugin()
     ddjvu_context_release(djvu_context);
 }
 
-//Iunknown interface
-COM::HResult DjVuPlugin::QueryInterface(const std::string& id, void** ppv)
-{
-    if(id == RProto::IPlugin::iid){
-        *ppv = (RProto::IPlugin*)this;
-        return COM::HResult();
-    }
-
-    return COM::BaseComponent::QueryInterface(id, ppv);
-}
-
 //IPlugin interface
 RProto::IBook* DjVuPlugin::createBook(const char* file)
 {
     auto doc = ddjvu_document_create_by_filename_utf8(djvu_context, file, 1);
     if(doc == nullptr)
         return nullptr;
-    auto book = new DjVuBook(this, doc);
+    auto book = Boss::Base<DjVuBook>::Create(this, doc);
     bookTable[doc] = book;
-    return book;
+    return book.Get();
 }
 
 const std::vector<std::string>& DjVuPlugin::fileExtensions()

@@ -29,15 +29,16 @@ set(DEBUG_INSTALL_ROOT "${CMAKE_CURRENT_BINARY_DIR}/local_root")
 
 set(FUTIL_INCLUDE_DIR "${DEBUG_INSTALL_ROOT}/include/futil")
 set(FUTIL_LIBRARY "${DEBUG_INSTALL_ROOT}/lib/libfutil.a")
-set(CLUE_API_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/clue_api/include")
+set(CLUE_API_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/glue_api/include")
+
+set(BOSS_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/BOSS/boss/include")
 
 add_subdirectory(q5_app)
 add_subdirectory(lib/futil)
-add_subdirectory(lib/clue_api)
-add_subdirectory(lib/plugins/pdfium)
+add_subdirectory(lib/glue_api)
+#add_subdirectory(lib/plugins/pdfium)
 add_subdirectory(lib/plugins/djvulibre)
 
-add_dependencies(glue_api Futil)
-add_dependencies(pdfiumglue Futil glue_api)
-add_dependencies(djvuglue Futil glue_api)
-add_dependencies(reader Futil glue_api pdfiumglue)
+#add_dependencies(pdfiumglue Futil glue_api)
+add_dependencies(djvuglue glue_api Futil)
+add_dependencies(reader glue_api Futil djvuglue)
