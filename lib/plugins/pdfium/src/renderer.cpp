@@ -52,23 +52,13 @@ Renderer::Renderer(Book *b)
 Renderer::~Renderer(){
 }
 
-COM::HResult Renderer::QueryInterface(const std::string &id, void **ppv)
-{
-    if(id == RProto::IRenderer::iid){
-        *ppv = (RProto::IRenderer*)this;
-        return COM::HResult();
-    }
-
-    return COM::BaseComponent::QueryInterface(id, ppv);
-}
-
 ImageTilePtr Renderer::renderRect(RProto::IRect *rect)
 {
     auto pdf_page_ptr = bookOwner->getPage(rect->page());
     if(pdf_page_ptr == nullptr)
-        return nullptr;
+        return ImageTilePtr();
 
-    ImageTile* tile = new ImageTile( rect->layout(), rect->page(), rect->zoom(),
+    auto tile = Boss::Base<ImageTile>::Create( rect->layout(), rect->page(), rect->zoom(),
                   rect->x()*rect->zoom(), rect->y()*rect->zoom(),
                   rect->width()*rect->zoom(), rect->height()*rect->zoom() );
 
@@ -84,7 +74,7 @@ ImageTilePtr Renderer::renderRect(RProto::IRect *rect)
 }
 
 ImageTilePtr Renderer::renderThumbnail(RProto::IRect* /*rect*/){
-    return nullptr;
+    return ImageTilePtr();
 }
 
 void Renderer::addListener(RProto::IRendererListener* /*listener*/){

@@ -43,7 +43,7 @@ set(SOURCES
     src/layout.cpp
     src/imagetile.cpp
     src/renderer.cpp
-#    src/ids.cpp
+    src/module.cpp
 )
 
 add_library(pdfiumglue SHARED

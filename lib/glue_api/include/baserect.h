@@ -5,7 +5,7 @@
 
 namespace RProto {
 
-class BaseRect : public Boss::CoClass<Boss::MakeId("RProto.IRect"), IRect>
+class BaseRect : public Boss::CoClass<Boss::MakeId("RProto.BaseRect"), IRect>
 {
 public:
     BaseRect(ILayout *lay, int page, double zoom, int x, int y, int width, int height);

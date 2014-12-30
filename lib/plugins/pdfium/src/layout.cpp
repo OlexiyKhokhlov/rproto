@@ -2,9 +2,12 @@
 #include <book.h>
 #include <point.h>
 #include <rect.h>
-#include <assert.h>
+
+#include <core/base.h>
 
 #include <fpdfview.h>
+
+#include <assert.h>
 
 Layout::Layout(Book *b, double dpix, double dpiy)
     :bookOwner(b)
@@ -96,7 +99,7 @@ RProto::IPoint* Layout::createPoint(int rpage, int x, int y)const
         return nullptr;
 
     auto zoom = page_vector[rpage].zoom;
-    return new Point((RProto::ILayout*)this, rpage, zoom, x, y);
+    return Boss::Base<Point>::CreatePtr((RProto::ILayout*)this, rpage, zoom, x, y);
 }
 
 RProto::IRect* Layout::createRect(int rpage, int x, int y, int width, int height)const
@@ -105,7 +108,7 @@ RProto::IRect* Layout::createRect(int rpage, int x, int y, int width, int height
         return nullptr;
 
     auto zoom = page_vector[rpage].zoom;
-    return new Rect((RProto::ILayout*)this, rpage, zoom, x, y, width, height);
+    return Boss::Base<Rect>::CreatePtr((RProto::ILayout*)this, rpage, zoom, x, y, width, height);
 }
 
 IInternalLayout::PageDescriptor& Layout::getPageDescr(int rpage){

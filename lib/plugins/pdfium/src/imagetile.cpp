@@ -1,8 +1,12 @@
 #include <imagetile.h>
+#include <rect.h>
+
+#include <core/base.h>
 
 ImageTile::ImageTile(RProto::ILayout *lay, int page, double zoom, int x, int y, int width, int height, ImageFormat format)
-    :imgRect(lay, page, zoom, x, y, width, height, (COM::BaseComponent*)this)
+    :imgRect(nullptr)
 {
+    imgRect = Boss::Base<Rect>::CreatePtr(lay, page, zoom, x, y, width, height);
     pdf_bitmap = FPDFBitmap_CreateEx(width, height, format, nullptr, 0);
     FPDFBitmap_FillRect(pdf_bitmap, 0, 0, width, height, -1);
 }
