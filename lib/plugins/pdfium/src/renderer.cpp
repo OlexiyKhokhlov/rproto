@@ -8,6 +8,8 @@
 #include <fpdfview.h>
 #include "library.h"
 
+#include <core/base.h>
+
 #include <assert.h>
 
 /**

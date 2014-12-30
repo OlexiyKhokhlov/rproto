@@ -27,9 +27,9 @@ find_package(OpenJpeg REQUIRED)
 set(HEADERS
     src/library.h
     src/plugin.h
+    src/book.h
     src/point.h
     src/rect.h
-    src/book.h
     src/iinternallayout.h
     src/layout.h
     src/imagetile.h
@@ -43,7 +43,7 @@ set(SOURCES
     src/layout.cpp
     src/imagetile.cpp
     src/renderer.cpp
-    src/ids.cpp
+#    src/ids.cpp
 )
 
 add_library(pdfiumglue SHARED
@@ -66,6 +66,7 @@ target_link_libraries(pdfiumglue
 
 include_directories(
     ${FUTIL_INCLUDE_DIR}
+    ${BOSS_INCLUDE_DIR}
     ${CLUE_API_INCLUDE_DIR}
     ${PDFIUM_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/src

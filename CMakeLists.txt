@@ -36,7 +36,7 @@ set(BOSS_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/BOSS/boss/include")
 add_subdirectory(q5_app)
 add_subdirectory(lib/futil)
 add_subdirectory(lib/glue_api)
-#add_subdirectory(lib/plugins/pdfium)
+add_subdirectory(lib/plugins/pdfium)
 add_subdirectory(lib/plugins/djvulibre)
 
 #add_dependencies(pdfiumglue Futil glue_api)

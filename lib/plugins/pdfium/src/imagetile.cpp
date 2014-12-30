@@ -12,26 +12,11 @@ ImageTile::~ImageTile()
     FPDFBitmap_Destroy(pdf_bitmap);
 }
 
-COM::HResult ImageTile::QueryInterface(const std::string &id, void **ppv)
-{
-    if(id == RProto::IImageTile::iid){
-        *ppv = (RProto::IImageTile*)this;
-        return COM::HResult();
-    }
-
-    if(id == RProto::IRect::iid){
-        *ppv = (RProto::IRect*)&imgRect;
-        return COM::HResult();
-    }
-
-    return COM::BaseComponent::QueryInterface(id, ppv);
-}
-
 // IImageTile interface
 const char* ImageTile::data()const{
     return (const char*)FPDFBitmap_GetBuffer(pdf_bitmap);
 }
 
 const RProto::IRect* ImageTile::rect()const{
-    return &imgRect;
+    return imgRect;
 }

@@ -23,23 +23,6 @@ Layout::~Layout()
     }
 }
 
-//Iunknown interface
-COM::HResult Layout::QueryInterface(const std::string& id, void** ppv)
-{
-    //IInternalLayout
-    if(id == IInternalLayout::iid){
-        *ppv = (IInternalLayout*)this;
-        return COM::HResult();
-    }
-
-    if(id == RProto::ILayout::iid){
-        *ppv = (RProto::ILayout*)this;
-        return COM::HResult();
-    }
-
-    return COM::BaseComponent::QueryInterface(id, ppv);
-}
-
 //ILayout interface
 void Layout::addListener(RProto::ILayoutListener *listener){
     listenerPtr = listener;

@@ -1,10 +1,14 @@
-#include <com/basecomponent.h>
-#include <util/singletone.h>
-#include <util/rlucache.h>
 #include <ibook.h>
 #include <imagetile.h>
 #include <library.h>
+
+#include <util/rlucache.h>
+#include <util/singletone.h>
+
+#include <core/co_class.h>
+
 #include <fpdfview.h>
+
 #include <memory>
 #include <thread>
 
@@ -15,20 +19,11 @@ struct Weight<ImageTilePtr>{
     }
 };
 
-class Book : public COM::BaseComponent, public RProto::IBook
+class Book : public Boss::CoClass<Boss::MakeId("PDFium.Book"), RProto::IBook>
 {
 public:
     Book(FPDF_DOCUMENT doc);
     virtual ~Book();
-
-    //Iunknown interface
-    virtual COM::HResult QueryInterface(const std::string& id, void** ppv) override;
-        virtual int addRef(){
-            return COM::BaseComponent::addRef();
-        }
-        virtual int release() {
-            return COM::BaseComponent::release();
-        }
 
     //IBook interface
     virtual RProto::ILayout* createLayout(double dpix, double dpiy) override;

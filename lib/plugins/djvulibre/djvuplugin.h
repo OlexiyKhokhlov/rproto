@@ -1,11 +1,10 @@
 #pragma once
 
-#include <util/visibility.h>
 #include <core/co_class.h>
-#include <core/ref_obj_ptr.h>
 #include <iplugin.h>
 
 #include <libdjvu/ddjvuapi.h>
+
 #include <unordered_map>
 #include <thread>
 #include <mutex>
@@ -17,7 +16,7 @@ namespace RProto {
 
 class DjVuBook;
 
-class DjVuPlugin : public Boss::CoClass<Boss::MakeId("RProto.IPlugin"), RProto::IPlugin>
+class DjVuPlugin : public Boss::CoClass<Boss::MakeId("DjVuLibre.DjVuPlugin"), RProto::IPlugin>
 {
 public:
     DjVuPlugin();
@@ -33,7 +32,7 @@ public:
 private:
     std::vector<std::string> extensions;
     ddjvu_context_t     *djvu_context;
-    std::unordered_map<ddjvu_document_t*, Boss::RefObjPtr<DjVuBook>> bookTable;
+    std::unordered_map<ddjvu_document_t*, DjVuBook*> bookTable;
 
     std::thread     message_thread;
     std::mutex      msgMutex;

@@ -2,26 +2,18 @@
 
 #include <ilayout.h>
 #include <iinternallayout.h>
-#include <com/basecomponent.h>
 #include <fpdfview.h>
 #include <vector>
 
+#include <core/base.h>
+
 class Book;
 
-class Layout : public COM::BaseComponent, public RProto::ILayout, public IInternalLayout
+class Layout : public Boss::CoClass<Boss::MakeId("PDFium.Layout"), RProto::ILayout, IInternalLayout>
 {
 public:
     explicit Layout(Book *book, double dpix, double dpiy);
     virtual ~Layout();
-
-    //Iunknown interface
-    virtual COM::HResult QueryInterface(const std::string& id, void** ppv) override;
-    virtual int addRef(){
-        return COM::BaseComponent::addRef();
-    }
-    virtual int release() {
-        return COM::BaseComponent::release();
-    }
 
     //ILayout interface
     virtual void addListener(RProto::ILayoutListener *listener) override;

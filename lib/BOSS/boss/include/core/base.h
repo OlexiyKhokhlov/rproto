@@ -341,6 +341,15 @@ namespace Boss
       return std::move(NewInst);
     }
 
+    template <typename ... Args>
+    static T* CreatePtr(Args const & ... args)
+    {
+      Private::ModuleCounter::ScopedLock Lock;
+      T* NewInst = new Base<T>(args ...);
+      Private::FinalizeConstruct<T>::Construct(NewInst);
+      return NewInst;
+    }
+
   private:
     std::atomic<UInt> Counter;
 

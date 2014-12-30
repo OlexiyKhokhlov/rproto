@@ -1,11 +1,13 @@
 #pragma once
 
-#include <com/iunknown.h>
+#include <core/ibase.h>
 #include <fpdfview.h>
 
-class IInternalLayout : public COM::IUnknown
+class IInternalLayout : public Boss::Inherit<Boss::IBase>
 {
 public:
+    BOSS_DECLARE_IFACEID("PDFIUM.IInternalLayout")
+
     struct PageDescriptor{
         bool isValid;
         FPDF_PAGE  pdf_page;
@@ -13,7 +15,4 @@ public:
     };
 
     virtual PageDescriptor& getPageDescr(int rpage=0) =0;
-    //virtual
-
-    static std::string iid;
 };

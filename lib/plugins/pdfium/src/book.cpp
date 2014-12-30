@@ -1,5 +1,6 @@
 #include <book.h>
 #include <assert.h>
+#include <core/base.h>
 
 #include <layout.h>
 #include <renderer.h>
@@ -15,26 +16,15 @@ Book::~Book()
     FPDF_CloseDocument(pdf_doc);
 }
 
-//Iunknown interface
-COM::HResult Book::QueryInterface(const std::string& id, void** ppv)
-{
-    if(id == RProto::IBook::iid){
-        *ppv = (RProto::IBook*)this;
-        return COM::HResult();
-    }
-
-    return COM::BaseComponent::QueryInterface(id, ppv);
-}
-
 //IBook interface
 RProto::ILayout* Book::createLayout(double dpix, double dpiy)
 {
-    return new Layout(this, dpix, dpiy);
+    return Boss::Base<Layout>::CreatePtr(this, dpix, dpiy);
 }
 
 RProto::IRenderer* Book::createRenderer()
 {
-    return new Renderer(this);
+    return Boss::Base<Renderer>::CreatePtr(this);
 }
 
 std::shared_ptr<Book::Page> Book::getPage(int num){

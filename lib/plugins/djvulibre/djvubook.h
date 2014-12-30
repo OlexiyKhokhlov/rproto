@@ -5,14 +5,13 @@
 #include <memory>
 #include <libdjvu/ddjvuapi.h>
 #include <core/co_class.h>
-#include <core/base.h>
 #include <util/rlucache.h>
 #include <ibook.h>
 
 class DjVuPlugin;
 class DjVuPageLayout;
 
-class DjVuBook : public Boss::CoClass<Boss::MakeId("RProto.IBook"), RProto::IBook>
+class DjVuBook : public Boss::CoClass<Boss::MakeId("DjVuLibre.DjVuBook"), RProto::IBook>
 {
 public:
     DjVuBook(DjVuPlugin *plugin, ddjvu_document_t* doc);

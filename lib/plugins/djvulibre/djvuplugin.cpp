@@ -2,6 +2,8 @@
 #include "djvubook.h"
 //#include "djvupagelayout.h"
 
+#include <core/base.h>
+
 DjVuPlugin::DjVuPlugin()
     :djvu_context(nullptr)
     ,stopListener(false)
@@ -28,9 +30,7 @@ RProto::IBook* DjVuPlugin::createBook(const char* file)
     auto doc = ddjvu_document_create_by_filename_utf8(djvu_context, file, 1);
     if(doc == nullptr)
         return nullptr;
-    auto book = Boss::Base<DjVuBook>::Create(this, doc);
-    bookTable[doc] = book;
-    return book.Get();
+    return bookTable[doc] = Boss::Base<DjVuBook>::CreatePtr(this, doc);
 }
 
 const std::vector<std::string>& DjVuPlugin::fileExtensions()

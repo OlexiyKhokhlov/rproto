@@ -3,6 +3,8 @@
 #include <book.h>
 #include "library.h"
 
+#include <core/base.h>
+
 Plugin::Plugin()
 {
     Singletone<Library>::instance().Init();
@@ -14,17 +16,6 @@ Plugin::~Plugin()
     Singletone<Library>::instance().Close();
 }
 
-//Iunknown interface
-COM::HResult Plugin::QueryInterface(const std::string& id, void** ppv)
-{
-    if(id == RProto::IPlugin::iid){
-        *ppv = (RProto::IPlugin*)this;
-        return COM::HResult();
-    }
-
-    return COM::BaseComponent::QueryInterface(id, ppv);
-}
-
 //IPlugin interface
 RProto::IBook* Plugin::createBook(const char* file)
 {
@@ -34,7 +25,7 @@ RProto::IBook* Plugin::createBook(const char* file)
     if(pdf_doc == nullptr)
         return nullptr;
 
-    return new Book(pdf_doc);
+    return Boss::Base<Book>::CreatePtr(pdf_doc);//new Book(pdf_doc);
 }
 
 const std::vector<std::string>& Plugin::fileExtensions()

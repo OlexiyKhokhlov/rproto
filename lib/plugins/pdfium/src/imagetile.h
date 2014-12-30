@@ -1,9 +1,11 @@
 #pragma once
 
 #include <functional>
-#include <com/basecomponent.h>
 #include <baserect.h>
 #include <iimagetile.h>
+
+#include <core/co_class.h>
+
 #include <fpdfview.h>
 
 /**
@@ -16,7 +18,7 @@
 4 -  4 bytes per pixel, byte order: blue, green, red, alpha
   -  QImage::Format_ARGB32
 */
-class ImageTile : public COM::BaseComponent, public RProto::IImageTile
+class ImageTile : public Boss::CoClass<Boss::MakeId("PDFium.ImageTile"), RProto::IImageTile>
 {
 public:
     enum ImageFormat{
@@ -29,15 +31,6 @@ public:
     ImageTile(RProto::ILayout *lay, int page, double zoom, int x, int y, int width, int height, ImageFormat format = FORMAT_RGB32);
     virtual ~ImageTile();
 
-    // IUnknown interface
-    virtual int addRef() override{
-        return COM::BaseComponent::addRef();
-    }
-    virtual int release() override{
-        return COM::BaseComponent::release();
-    }
-    virtual COM::HResult QueryInterface(const std::string &, void **ppv) override;
-
     // IImageTile interface
     virtual const char* data()const override;
     virtual const RProto::IRect* rect()const override;
@@ -47,8 +40,8 @@ public:
     }
 
 private:
-    FPDF_BITMAP     pdf_bitmap;
-    RProto::BaseRect imgRect;
+    FPDF_BITMAP         pdf_bitmap;
+    RProto::BaseRect    *imgRect;
 };
 
 namespace std {
