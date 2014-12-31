@@ -25,7 +25,9 @@ RProto::IBook* Plugin::createBook(const char* file)
     if(pdf_doc == nullptr)
         return nullptr;
 
-    return Boss::Base<Book>::CreatePtr(pdf_doc);//new Book(pdf_doc);
+    auto book = Boss::Base<Book>::CreatePtr(pdf_doc);
+    book->AddRef();
+    return book;
 }
 
 const std::vector<std::string>& Plugin::fileExtensions()

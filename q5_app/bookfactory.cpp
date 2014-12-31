@@ -4,7 +4,6 @@
 
 #include <core/module.h>
 #include <core/base.h>
-//#include <plugin/loader.h>
 #include "../lib/plugins/pdfium/src/plugin.h"
 
 #include <QFileInfo>
@@ -45,7 +44,7 @@ IBook* BookFactory::createBook(const QString& path)
 {
     QFileInfo finfo(path);
     if(finfo.exists() && finfo.isFile()){
-        auto it = pluginTable.find(finfo.completeSuffix());
+        auto it = pluginTable.find(finfo.suffix());
         if(it != pluginTable.end()){
             IPlugin* plug = it.value();
             return plug->createBook(path.toLocal8Bit().constData());
