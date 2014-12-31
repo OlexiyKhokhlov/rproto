@@ -3,11 +3,13 @@
 #include <iplugin.h>
 #include <core/co_class.h>
 
+#include <util/visibility.h>
+
 namespace RProto {
     class IBook;
 }
 
-class Plugin : public Boss::CoClass<Boss::MakeId("PDFium.Plugin"), RProto::IPlugin>
+class DLL_PUBLIC Plugin : public Boss::CoClass<Boss::MakeId("PDFium.Plugin"), RProto::IPlugin>
 {
 public:
     Plugin();

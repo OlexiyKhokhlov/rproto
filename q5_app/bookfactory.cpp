@@ -2,18 +2,27 @@
 #include <iplugin.h>
 #include <ibook.h>
 
+#include <core/module.h>
+#include <core/base.h>
+//#include <plugin/loader.h>
+#include "../lib/plugins/pdfium/src/plugin.h"
+
 #include <QFileInfo>
 
 using namespace RProto;
 
 BookFactory::BookFactory()
 {
+    //auto ptr = Boss::CreateObject<RProto::IPlugin>(Boss::MakeId("PDFium.Plugin"));
+    auto ptr = Boss::Base<Plugin>::CreatePtr();
+    ptr->AddRef();
+    registerPlugin(ptr);
 }
 
 BookFactory::~BookFactory()
 {
     for(IPlugin* plug : pluginTable.values()){
-        delete plug;
+        plug->Release();
     }
 }
 

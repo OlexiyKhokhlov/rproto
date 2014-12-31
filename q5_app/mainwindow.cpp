@@ -2,9 +2,8 @@
 #include "pageview.h"
 
 #include <util/singletone.h>
-//#include <bookfactory.h>
+#include <bookfactory.h>
 #include <ibook.h>
-//#include "../lib/plugins/pdfium/src/plugin.h"
 
 //#include <g3log/g2log.hpp>
 
@@ -15,6 +14,7 @@
 
 MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
     QMainWindow(parent, flags)
+    ,bookFactory(nullptr)
 {
 //    bookFactory = new RProto::BookFactory();
 //    RProto::DjVuPlugin* plug = new RProto::DjVuPlugin();
@@ -55,6 +55,8 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
     end->setShortcut(QKeySequence(Qt::Key_End));
     addAction(end);
     connect(end, SIGNAL(triggered(bool)), pageView, SLOT(toEnd()));
+
+    bookFactory = new RProto::BookFactory();
 }
 
 MainWindow::~MainWindow()
@@ -95,6 +97,6 @@ void MainWindow::onOpenFile()
 //    auto book = pl->createBook(fileName.toLocal8Bit().constData());
 
 ////    LOG(INFO) << "Start open file" << fileName;
-////    auto book = bookFactory->createBook(fileName);
-//    pageView->setBook(book);
+    auto book = bookFactory->createBook(fileName);
+    pageView->setBook(book);
 }
