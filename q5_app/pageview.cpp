@@ -24,12 +24,11 @@ PageView::PageView(QWidget *parent) :
   ,fitMode(FIT_HEIGHT)
   ,currentPage(0)
   ,clearPage(false)
-  ,layoutListener(this)
 {
-    viewport()->setAttribute(Qt::WA_OpaquePaintEvent);
+/*    viewport()->setAttribute(Qt::WA_OpaquePaintEvent);
     viewport()->setAttribute(Qt::WA_PaintOnScreen);
-    viewport()->setAttribute(Qt::WA_NoSystemBackground);
-    viewport()->setMouseTracking (true);
+    viewport()->setAttribute(Qt::WA_NoSystemBackground);*/
+    //viewport()->setMouseTracking(true);
 
     connect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(onScrollBarValueChanged(int)));
     connect(horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(onScrollBarValueChanged(int)));
@@ -51,7 +50,8 @@ void PageView::setBook(RProto::IBook*  bk)
     layout = book->createLayout(dpiX, dpiY);
     renderer = book->createRenderer();
 
-    layout->addListener(&layoutListener);
+    auto listener = static_cast<RProto::ILayoutListener*>(this);
+    layout->addListener(listener);
 
     layout->startLayouting();
     currentOffset = QPoint(0,0);

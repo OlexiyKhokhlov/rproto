@@ -7,7 +7,7 @@
 #include <ilayout.h>
 #include <irenderer.h>
 
-class PageView : public QAbstractScrollArea
+class PageView : public QAbstractScrollArea, private RProto::ILayoutListener
 {
     Q_OBJECT
 
@@ -73,25 +73,9 @@ private:
 
     bool     clearPage;
 
-    class LayoutListener : public RProto::ILayoutListener{
-    public:
-        LayoutListener(PageView *inst)
-            :owner(inst){}
-        virtual void onPageCountChanged(int page_count) override{
-            owner->onPageCountChanged(page_count);
-        }
-
-        virtual void onPageSizeChanged(int page, int width, int height)override{
-            owner->onPageSizeChanged(page, width, height);
-        }
-    private:
-        PageView *owner;
-    };
-    friend class LayoutListener;
-    LayoutListener layoutListener;
-
-    void onPageCountChanged(int count);
-    void onPageSizeChanged(int page, int width, int height);
-
     void setNewPage(int num);
+
+    //Interface RProto::ILayoutListener
+    virtual void onPageCountChanged(int count) override;
+    virtual void onPageSizeChanged(int page, int width, int height) override;
 };
