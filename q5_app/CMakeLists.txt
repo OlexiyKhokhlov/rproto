@@ -6,9 +6,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 #find_package(g3log REQUIRED)
 #include_directories(${G3LOG_INCLUDE_DIRS})
 
-find_package(Boost REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS})
-
 if(USE_QT4)
     find_package(Qt4 REQUIRED)
     INCLUDE(${QT_USE_FILE})
@@ -50,5 +47,5 @@ include_directories(
 
 target_link_libraries(reader
     pdfiumglue
-    djvuglue
+#    djvuglue
 )

@@ -17,13 +17,12 @@ add_library(djvuglue SHARED
 
 target_link_libraries(djvuglue
 #    ${G3LOG_LIBRARIES}
-    ${FUTIL_LIBRARY}
     ${DJVULIBRE_LIBRARIES}
     glue_api
 )
 
 include_directories(
-    ${FUTIL_INCLUDE_DIR}
+    ${UTIL_INCLUDE_DIR}
     ${BOSS_INCLUDE_DIR}
     ${CLUE_API_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}

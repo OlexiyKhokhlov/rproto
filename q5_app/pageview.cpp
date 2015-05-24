@@ -25,10 +25,10 @@ PageView::PageView(QWidget *parent) :
   ,currentPage(0)
   ,clearPage(false)
 {
-/*    viewport()->setAttribute(Qt::WA_OpaquePaintEvent);
-    viewport()->setAttribute(Qt::WA_PaintOnScreen);
-    viewport()->setAttribute(Qt::WA_NoSystemBackground);*/
-    //viewport()->setMouseTracking(true);
+    viewport()->setAttribute(Qt::WA_OpaquePaintEvent);
+//    viewport()->setAttribute(Qt::WA_PaintOnScreen);
+    viewport()->setAttribute(Qt::WA_NoSystemBackground);
+    viewport()->setMouseTracking(true);
 
     connect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(onScrollBarValueChanged(int)));
     connect(horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(onScrollBarValueChanged(int)));

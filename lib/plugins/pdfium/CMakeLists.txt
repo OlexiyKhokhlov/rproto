@@ -1,7 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
 
-set(CMAKE_AUTOMOC ON)
-
 add_subdirectory(pdfium)
 
 set(PDFIUM_INCLUDE_DIR "${DEBUG_INSTALL_ROOT}/include/pdfium")
@@ -11,9 +9,6 @@ add_definitions(-DBUILDING_DLL)
 
 #find_package(g3log REQUIRED)
 #include_directories(${G3LOG_INCLUDE_DIRS})
-
-find_package(Boost REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS})
 
 find_package(JPEG REQUIRED)
 #include_directories(${JPEG_INCLUDE_DIRS})
@@ -55,7 +50,6 @@ add_dependencies(pdfiumglue pdfium)
 
 target_link_libraries(pdfiumglue
 #    ${G3LOG_LIBRARIES}
-    ${FUTIL_LIBRARY}
     ${PDFIUM_LIBRARY}
     ${JPEG_LIBRARIES}
     ${ZLIB_LIBRARIES}
