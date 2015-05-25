@@ -10,6 +10,8 @@ add_definitions(-DBUILDING_DLL)
 #find_package(g3log REQUIRED)
 #include_directories(${G3LOG_INCLUDE_DIRS})
 
+find_package(Freetype REQUIRED)
+
 find_package(JPEG REQUIRED)
 #include_directories(${JPEG_INCLUDE_DIRS})
 find_package(ZLIB REQUIRED)
@@ -51,6 +53,7 @@ add_dependencies(pdfiumglue pdfium)
 target_link_libraries(pdfiumglue
 #    ${G3LOG_LIBRARIES}
     ${PDFIUM_LIBRARY}
+    ${FREETYPE_LIBRARIES}
     ${JPEG_LIBRARIES}
     ${ZLIB_LIBRARIES}
     ${LCMS2_LIBRARIES}
@@ -59,6 +62,7 @@ target_link_libraries(pdfiumglue
 )
 
 include_directories(
+    ${UTF8_INCLUDE_DIR}
     ${FUTIL_INCLUDE_DIR}
     ${BOSS_INCLUDE_DIR}
     ${CLUE_API_INCLUDE_DIR}

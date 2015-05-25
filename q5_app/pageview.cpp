@@ -21,13 +21,14 @@ PageView::PageView(QWidget *parent) :
   ,book(nullptr)
   ,layout(nullptr)
   ,renderer(nullptr)
-  ,fitMode(FIT_HEIGHT)
+  ,fitMode(FIT_WIDTH)
   ,currentPage(0)
   ,clearPage(false)
 {
     viewport()->setAttribute(Qt::WA_OpaquePaintEvent);
-//    viewport()->setAttribute(Qt::WA_PaintOnScreen);
     viewport()->setAttribute(Qt::WA_NoSystemBackground);
+    //viewport()->setAttribute(Qt::WA_PaintOnScreen);
+
     viewport()->setMouseTracking(true);
 
     connect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(onScrollBarValueChanged(int)));

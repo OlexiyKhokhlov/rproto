@@ -51,9 +51,9 @@ public slots:
     void toEnd();
 
 protected:
-   virtual void resizeEvent ( QResizeEvent * event );
-   virtual bool viewportEvent ( QEvent * event );
-   virtual void viewportPaintEvent ( QPaintEvent * event );
+   virtual void resizeEvent(QResizeEvent* event);
+   virtual bool viewportEvent(QEvent* event);
+   virtual void viewportPaintEvent(QPaintEvent* event);
 
 private slots:
    void onScrollBarValueChanged(int value);
