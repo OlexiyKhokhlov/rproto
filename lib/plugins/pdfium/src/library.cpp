@@ -10,7 +10,7 @@ Library::~Library(){
 }
 
 void Library::Init(){
-    FPDF_InitLibrary(nullptr);
+    FPDF_InitLibrary();
 }
 
 void Library::Close(){
