@@ -12,6 +12,12 @@ list(REMOVE_DUPLICATES CMAKE_MODULE_PATH)
 
 set(USE_QT4 ON CACHE BOOL "use Qt4 or Qt5")
 
+set(USE_BINUTILS_WORKAROUND ON CACHE BOOL "use gcc-ar and gcc-ranlib instead ar and ranlib (is needed for LTO)")
+if(USE_BINUTILS_WORKAROUND)
+    set(CMAKE_AR gcc-ar)
+    set(CMAKE_RANLIB gcc-ranlib)
+endif(USE_BINUTILS_WORKAROUND)
+
 #Enable C++0x
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wc++0x-compat -Wall -Wextra -pipe -fno-rtti -fvisibility=hidden")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -pipe -fvisibility=hidden")
