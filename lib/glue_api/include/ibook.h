@@ -7,6 +7,7 @@ namespace RProto{
 
 class ILayout;
 class IRenderer;
+class IContent;
 
 class IBook : public Boss::Inherit<Boss::IBase>
 {
@@ -17,6 +18,7 @@ public:
 
     virtual ILayout* createLayout(double dpix, double dpiy) =0;
     virtual IRenderer* createRenderer() =0;
+    //virtual IContent* createContent() =0;
 };
 }
 

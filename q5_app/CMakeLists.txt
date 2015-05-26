@@ -20,6 +20,7 @@ set(reader_HEADERS
     bookfactory.h
     mainwindow.h
     pageview.h
+    contentmodel.h
 )
 
 set(reader_SOURCES
@@ -27,6 +28,7 @@ set(reader_SOURCES
     bookfactory.cpp
     mainwindow.cpp
     pageview.cpp
+    contentmodel.cpp
 )
 
 add_executable(reader ${reader_SOURCES} ${reader_HEADERS})
