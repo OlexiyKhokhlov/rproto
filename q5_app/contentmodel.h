@@ -2,6 +2,10 @@
 
 #include <QAbstractItemModel>
 
+namespace RProto{
+    class IContent;
+}
+
 class ContentModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -17,5 +21,5 @@ public:
     virtual QModelIndex parent(const QModelIndex &child) const override;
 
 private:
-
+    RProto::IContent *content;
 };

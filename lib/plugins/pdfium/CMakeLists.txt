@@ -11,15 +11,10 @@ add_definitions(-DBUILDING_DLL)
 #include_directories(${G3LOG_INCLUDE_DIRS})
 
 find_package(Freetype REQUIRED)
-
 find_package(JPEG REQUIRED)
-#include_directories(${JPEG_INCLUDE_DIRS})
 find_package(ZLIB REQUIRED)
-#include_directories(${ZLIB_INCLUDE_DIRS})
 find_package(LCMS2 REQUIRED)
-#include_directories(${LCMS2_INCLUDE_DIRS})
 find_package(OpenJpeg REQUIRED)
-#include_directories(${OPENJPEG_INCLUDE_DIR})
 
 set(HEADERS
     src/library.h
@@ -31,6 +26,7 @@ set(HEADERS
     src/layout.h
     src/imagetile.h
     src/renderer.h
+    src/content.h
 )
 
 set(SOURCES
@@ -41,6 +37,7 @@ set(SOURCES
     src/imagetile.cpp
     src/renderer.cpp
     src/module.cpp
+    src/content.cpp
 )
 
 add_library(pdfiumglue SHARED

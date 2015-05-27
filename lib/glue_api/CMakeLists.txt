@@ -18,7 +18,6 @@ set(HEADERS
     include/ilayout.h
     include/iplugin.h
     include/irenderer.h
-    include/icontentnode.h
     include/icontent.h
 )
 

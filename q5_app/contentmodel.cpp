@@ -1,4 +1,5 @@
 #include "contentmodel.h"
+#include <icontent.h>
 
 ContentModel::ContentModel()
 {
