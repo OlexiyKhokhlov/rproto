@@ -68,7 +68,7 @@ void PageView::setPage(int pg){
     if(currentPage != page){
         currentPage = page;
         currentOffset = QPoint(0,0);
-
+        setNewPage(currentPage);
         emit pageChanged(currentPage);
     }
 }

@@ -14,8 +14,9 @@ public:
     //Interface IContent
     virtual void addListener(RProto::IContentListener *listener) override;
     virtual const std::string& title(int subcontent_id, int row) const override;
-    virtual const std::string& link(int subcontent_id, int row) const override;
+    virtual const int pageNumber(int subcontent_id, int row) const override;
     virtual std::pair<int,int> parentId(int subcontent_id) const override;
+    virtual int childsId(int parent_id, int parent_row) const override;
     virtual int rowCount(int subcontent_id) const override;
 
 private:
@@ -25,7 +26,8 @@ private:
     struct Item{
         FPDF_BOOKMARK bookmark;
         std::string title;
-        std::string link;
+        int page;
+        int childs_id;
     };
 
     struct SubContent{
@@ -39,6 +41,5 @@ private:
 
     const Content::Item* getItem(int subcontent_id, int row) const;
     void loadContent();
-    void fillSubContent(SubContent& sc, FPDF_BOOKMARK first);
     void fillItem(Item& item);
 };

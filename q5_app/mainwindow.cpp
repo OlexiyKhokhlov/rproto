@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "pageview.h"
+#include "contentview.h"
 
 #include <util/singletone.h>
 #include <bookfactory.h>
@@ -10,6 +11,9 @@
 #include <QSettings>
 #include <QFileDialog>
 #include <QAction>
+#include <QDockWidget>
+#include <QHBoxLayout>
+#include <QTreeView>
 #include <QDebug>
 
 MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
@@ -56,6 +60,13 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
     addAction(end);
     connect(end, SIGNAL(triggered(bool)), pageView, SLOT(toEnd()));
 
+    QDockWidget* contentDock = new QDockWidget("Contents", nullptr);
+    contentDock->setObjectName("ContentDock");
+    contentView = new ContentView(contentDock);
+    contentDock->setWidget(contentView);
+    addDockWidget(Qt::LeftDockWidgetArea, contentDock);
+
+    connect(contentView, SIGNAL(pageChanged(int)), pageView, SLOT(setPage(int)));
     bookFactory = new RProto::BookFactory();
 }
 
@@ -98,5 +109,7 @@ void MainWindow::onOpenFile()
 
 ////    LOG(INFO) << "Start open file" << fileName;
     auto book = bookFactory->createBook(fileName);
+    auto content = book->createContent();
+    contentView->setContent(content);
     pageView->setBook(book);
 }

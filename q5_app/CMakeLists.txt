@@ -21,6 +21,7 @@ set(reader_HEADERS
     mainwindow.h
     pageview.h
     contentmodel.h
+    contentview.h
 )
 
 set(reader_SOURCES
@@ -29,6 +30,7 @@ set(reader_SOURCES
     mainwindow.cpp
     pageview.cpp
     contentmodel.cpp
+    contentview.cpp
 )
 
 add_executable(reader ${reader_SOURCES} ${reader_HEADERS})

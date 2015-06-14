@@ -49,4 +49,4 @@ add_subdirectory(lib/plugins/pdfium)
 
 add_dependencies(pdfiumglue glue_api)
 #add_dependencies(djvuglue glue_api)
-add_dependencies(reader glue_ap)
+add_dependencies(reader glue_api)

@@ -28,6 +28,7 @@ public:
     //IBook interface
     virtual RProto::ILayout* createLayout(double dpix, double dpiy) override;
     virtual RProto::IRenderer* createRenderer() override;
+    virtual RProto::IContent* createContent() override;
 
     //Plugin private
     struct Page{

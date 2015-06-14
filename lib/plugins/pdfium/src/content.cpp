@@ -10,7 +10,7 @@ Content::Content(FPDF_DOCUMENT doc)
     :pdf_doc(doc)
     ,listener(nullptr)
 {
-
+    if(pdf_doc != nullptr) loadContent();
 }
 
 Content::~Content(){
@@ -29,20 +29,27 @@ const std::string& Content::title(int subcontent_id, int row) const{
     return item->title;
 }
 
-const std::string& Content::link(int subcontent_id, int row) const{
+const int Content::pageNumber(int subcontent_id, int row) const{
     auto item = getItem(subcontent_id, row);
     if(item == nullptr)
-        return empty;
-    return item->link;
+        return 0;
+    return item->page;
 }
 
 std::pair<int,int> Content::parentId(int subcontent_id) const{
-    return std::make_pair(0,0);
+    if(subcontent_id >= (int)content.size())
+        return std::make_pair(-1,-1);
+    const SubContent& sc = content[subcontent_id];
+    return std::make_pair(sc.parent_id, sc.parent_row);
+}
+
+int Content::childsId(int parent_id, int parent_row) const{
+    return content[parent_id].items[parent_row].childs_id;
 }
 
 int Content::rowCount(int subcontent_id) const{
     if(subcontent_id >= (int)content.size())
-        return -1;
+        return 0;
     return content[subcontent_id].items.size();
 }
 
@@ -57,38 +64,72 @@ const Content::Item* Content::getItem(int subcontent_id, int row) const{
 }
 
 void Content::loadContent(){
-    auto node = FPDFBookmark_GetFirstChild(pdf_doc, nullptr);
+    auto bookmark = FPDFBookmark_GetFirstChild(pdf_doc, nullptr);
 
-    if(node == nullptr){
-        //empty content table
-        return;
-    }
+    //empty content table
+    if(bookmark == nullptr)return;
 
-}
+    content.emplace_back();
+    SubContent* curr_content = &content.back();
+    curr_content->parent_id = -1;
+    curr_content->parent_row = -1;
+    curr_content->items.reserve(32);
 
-void Content::fillSubContent(SubContent& sc, FPDF_BOOKMARK first){
-    sc.items.clear();
-    if(first == nullptr)
-        return;
-
-    sc.items.reserve(32);
+    int id  = 0;
+    int row = 0;
     do{
         Item item;
-        item.bookmark = first;
+        item.bookmark = bookmark;
         fillItem(item);
-        sc.items.emplace_back(item);
-    }while((first = FPDFBookmark_GetNextSibling(pdf_doc, first)) != nullptr);
-    sc.items.shrink_to_fit();
+        curr_content->items.emplace_back(item);
+        row = curr_content->items.size()-1;
+
+        auto child = FPDFBookmark_GetFirstChild(pdf_doc, bookmark);
+        if(child != nullptr){ //go to in the deep
+            content.emplace_back();
+            curr_content = &content.back();
+            curr_content->parent_id = id;
+            curr_content->parent_row = row;
+            curr_content->items.reserve(32);
+            id = content.size()-1;
+            row = 0;
+            bookmark = child;
+            content[curr_content->parent_id].items[curr_content->parent_row].childs_id = id;
+            continue;
+        }
+
+        bookmark = FPDFBookmark_GetNextSibling(pdf_doc, bookmark);
+        if(bookmark != nullptr){  //traverse sibling
+            continue;
+        }
+
+        if(curr_content->parent_id == -1 && bookmark == nullptr)
+            break;
+
+        //go to up!
+        while(curr_content->parent_id != -1){
+            curr_content->items.shrink_to_fit();
+            id = curr_content->parent_id;
+            row = curr_content->parent_row;
+            curr_content = &content[id];
+            auto item  = curr_content->items[row];
+            bookmark = FPDFBookmark_GetNextSibling(pdf_doc, item.bookmark);
+            if(bookmark != nullptr)
+                break;
+            id = -1;
+        }
+
+    }while(id != -1);
 }
 
 void Content::fillItem(Item& item){
     item.title.clear();
-    item.link.clear();
+    item.page = 0;
+    item.childs_id = -1;
 
     auto dest = FPDFBookmark_GetDest(pdf_doc, item.bookmark);
     if(dest != nullptr){
-        auto page = FPDFDest_GetPageIndex(pdf_doc, dest);
-        item.link = std::to_string(page);
+        item.page = FPDFDest_GetPageIndex(pdf_doc, dest);
     }
 
     std::vector<unsigned short> utf16line(256);

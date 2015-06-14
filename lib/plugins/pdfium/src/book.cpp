@@ -5,6 +5,7 @@
 
 #include <layout.h>
 #include <renderer.h>
+#include <content.h>
 
 Book::Book(FPDF_DOCUMENT doc)
     :pdf_doc(doc)
@@ -27,6 +28,10 @@ RProto::ILayout* Book::createLayout(double dpix, double dpiy)
 RProto::IRenderer* Book::createRenderer()
 {
     return Boss::Base<Renderer>::CreatePtr(this);
+}
+
+RProto::IContent* Book::createContent(){
+    return Boss::Base<Content>::CreatePtr(pdf_doc);
 }
 
 std::shared_ptr<Book::Page> Book::getPage(int num){

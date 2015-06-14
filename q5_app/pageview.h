@@ -32,9 +32,7 @@ public:
     int page()const{
         return currentPage;
     }
-    void setPage(int pg);
     float zoom()const;
-    void setZoom(float zm);
     PageFit pageFitMode()const{
         return fitMode;
     }
@@ -49,6 +47,8 @@ public slots:
     void pageDown();
     void toHome();
     void toEnd();
+    void setPage(int pg);
+    void setZoom(float zm);
 
 protected:
    virtual void resizeEvent(QResizeEvent* event);

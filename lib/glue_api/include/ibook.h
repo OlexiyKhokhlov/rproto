@@ -18,7 +18,7 @@ public:
 
     virtual ILayout* createLayout(double dpix, double dpiy) =0;
     virtual IRenderer* createRenderer() =0;
-    //virtual IContent* createContent() =0;
+    virtual IContent* createContent() =0;
 };
 }
 

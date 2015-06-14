@@ -2,6 +2,8 @@
 
 #include <QMainWindow>
 
+class ContentView;
+
 class PageView;
 namespace RProto{
     class BookFactory;
@@ -25,4 +27,5 @@ protected:
 private:
     RProto::BookFactory *bookFactory;
     PageView	*pageView;
+    ContentView *contentView;
 };
