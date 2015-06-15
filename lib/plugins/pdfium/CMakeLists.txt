@@ -10,11 +10,26 @@ add_definitions(-DBUILDING_DLL)
 #find_package(g3log REQUIRED)
 #include_directories(${G3LOG_INCLUDE_DIRS})
 
-find_package(Freetype REQUIRED)
-find_package(JPEG REQUIRED)
-find_package(ZLIB REQUIRED)
-find_package(LCMS2 REQUIRED)
-find_package(OpenJpeg REQUIRED)
+set(USE_BINUTILS_WORKAROUND ON CACHE BOOL "use gcc-ar and gcc-ranlib instead ar and ranlib (is needed for LTO)")
+
+#3dparty libraries
+set(USE_SYSTEM_FREETYPE ON CACHE BOOL "use system freetype")
+set(USE_SYSTEM_JPEG ON CACHE BOOL "use system libjpeg")
+set(USE_SYSTEM_ZLIB ON CACHE BOOL "use system zlib")
+set(USE_SYSTEM_LCMS2 ON CACHE BOOL "use system lcms2")
+set(USE_SYSTEM_OPENJPEG ON CACHE BOOL "use system openjpeg" )
+
+#hieroglyphs support
+set(USE_GB1_MAPS OFF CACHE BOOL "use GB1 maps")
+set(USE_CNS1_MAPS OFF CACHE BOOL "use CNS1 maps")
+set(USE_JAPAN1_MAPS OFF CACHE BOOL "use JAPAN1 maps")
+set(USE_KOREA_MAPS OFF CACHE BOOL "use KOREA maps")
+
+find_package(Freetype)
+find_package(JPEG)
+find_package(ZLIB)
+find_package(LCMS2)
+find_package(OpenJpeg)
 
 set(HEADERS
     src/library.h

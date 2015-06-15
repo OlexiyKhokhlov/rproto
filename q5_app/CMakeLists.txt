@@ -11,9 +11,7 @@ if(USE_QT4)
     INCLUDE(${QT_USE_FILE})
     ADD_DEFINITIONS(${QT_DEFINITIONS})
 else(USE_QT4)
-    find_package(Qt5Core REQUIRED)
-    find_package(Qt5Gui REQUIRED)
-    find_package(Qt5Widgets REQUIRED)
+    find_package(Qt5 REQUIRED Core Gui Widgets)
 endif(USE_QT4)
 
 set(reader_HEADERS
