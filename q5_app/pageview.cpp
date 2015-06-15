@@ -21,6 +21,7 @@ PageView::PageView(QWidget *parent) :
   ,book(nullptr)
   ,layout(nullptr)
   ,renderer(nullptr)
+  ,navigation_mode(NAVIGATION_POINTER)
   ,fitMode(FIT_WIDTH)
   ,currentPage(0)
   ,clearPage(false)
@@ -57,6 +58,14 @@ void PageView::setBook(RProto::IBook*  bk)
     layout->startLayouting();
     currentOffset = QPoint(0,0);
     setNewPage(0);
+}
+
+void PageView::setNavigationMode(NavigationMode mode){
+    navigation_mode = mode;
+    if(navigation_mode == NAVIGATION_DRAG)
+        setCursor(Qt::OpenHandCursor);
+    else
+        setCursor(Qt::ArrowCursor);
 }
 
 void PageView::setPage(int pg){

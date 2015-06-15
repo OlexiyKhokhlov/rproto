@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="open">resources/icons/folder_open.png</file>
+        <file alias="mouse">resources/icons/mouse.png</file>
+        <file alias="fullscreen">resources/icons/view_fullscreen.png</file>
+        <file alias="zoom_in">resources/icons/zoom_in.png</file>
+        <file alias="zoom_out">resources/icons/zoom_out.png</file>
+    </qresource>
+</RCC>

@@ -20,6 +20,7 @@ public:
 public slots:
     void onUpdateTitle(QString new_title);
     void onOpenFile();
+    void onNavigationMode(bool checked);
 
 protected:
     virtual void closeEvent(QCloseEvent *event);

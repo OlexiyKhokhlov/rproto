@@ -12,8 +12,9 @@
 #include <QFileDialog>
 #include <QAction>
 #include <QDockWidget>
+#include <QToolBar>
+#include <QToolButton>
 #include <QHBoxLayout>
-#include <QTreeView>
 #include <QDebug>
 
 MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
@@ -34,11 +35,6 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
     setCentralWidget(pageView);
 
     onUpdateTitle(QString());
-
-    QAction* openFile = new QAction(tr("&Open file"), this);
-    openFile->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O));
-    addAction(openFile);
-    connect(openFile, SIGNAL(triggered(bool)), this, SLOT(onOpenFile()));
 
     QAction* pageUp = new QAction(tr("&pageUp"), this);
     pageUp->setShortcut(QKeySequence(Qt::Key_PageUp));
@@ -65,6 +61,28 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
     contentView = new ContentView(contentDock);
     contentDock->setWidget(contentView);
     addDockWidget(Qt::LeftDockWidgetArea, contentDock);
+
+    QToolBar *toolbar = new QToolBar(tr("Main Toolbar"));
+    toolbar->setObjectName("MainToolBar");
+
+    QAction* openFile = toolbar->addAction(QIcon(":/icons/open"), tr("&Open File"), this, SLOT(onOpenFile()));
+    openFile->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O));
+
+    QAction* fullscreenMode = toolbar->addAction(QIcon(":/icons/fullscreen"), tr("&Fullscreen Mode")/*, this, SLOT(onOpenFile())*/);
+    fullscreenMode->setShortcut(QKeySequence(Qt::Key_F11));
+    fullscreenMode->setCheckable(true);
+
+    QAction* navMode = toolbar->addAction(QIcon(":/icons/mouse"), tr("&Navigation Mode"), this, SLOT(onNavigationMode(bool)));
+    navMode->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_N));
+    navMode->setCheckable(true);
+
+    QAction* zoomOut = toolbar->addAction(QIcon(":/icons/zoom_out"), tr("&Zoom Out")/*, this, SLOT(onOpenFile())*/);
+    zoomOut->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Minus));
+
+    QAction* zoomIn = toolbar->addAction(QIcon(":/icons/zoom_in"), tr("&Zoom In")/*, this, SLOT(onOpenFile())*/);
+    zoomOut->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Plus));
+
+    addToolBar(toolbar);
 
     connect(contentView, SIGNAL(pageChanged(int)), pageView, SLOT(setPage(int)));
     bookFactory = new RProto::BookFactory();
@@ -112,4 +130,11 @@ void MainWindow::onOpenFile()
     auto content = book->createContent();
     contentView->setContent(content);
     pageView->setBook(book);
+}
+
+void MainWindow::onNavigationMode(bool checked){
+    if(checked)
+        pageView->setNavigationMode(PageView::NAVIGATION_DRAG);
+    else
+        pageView->setNavigationMode(PageView::NAVIGATION_POINTER);
 }

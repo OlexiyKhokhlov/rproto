@@ -10,8 +10,10 @@ if(USE_QT4)
     find_package(Qt4 REQUIRED)
     INCLUDE(${QT_USE_FILE})
     ADD_DEFINITIONS(${QT_DEFINITIONS})
+    qt4_add_resources(reader_RSRC icons.qrc)
 else(USE_QT4)
     find_package(Qt5 REQUIRED Core Gui Widgets)
+    qt5_add_resources(reader_RSRC icons.qrc)
 endif(USE_QT4)
 
 set(reader_HEADERS
@@ -31,7 +33,11 @@ set(reader_SOURCES
     contentview.cpp
 )
 
-add_executable(reader ${reader_SOURCES} ${reader_HEADERS})
+add_executable(reader
+    ${reader_SOURCES}
+    ${reader_HEADERS}
+    ${reader_RSRC}
+)
 
 #target_link_libraries(reader ${G3LOG_LIBRARIES})
 

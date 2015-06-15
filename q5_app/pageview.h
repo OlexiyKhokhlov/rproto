@@ -11,23 +11,37 @@ class PageView : public QAbstractScrollArea, private RProto::ILayoutListener
 {
     Q_OBJECT
 
+    Q_ENUMS(NavigationMode)
     Q_ENUMS(PageFit)
 
+    Q_PROPERTY(NavigationMode navigationMode READ navigationMode WRITE setNavigationMode)
     Q_PROPERTY(int page READ page WRITE setPage NOTIFY pageChanged)
     Q_PROPERTY(float zoom READ zoom WRITE setZoom NOTIFY zoomChanged)
     Q_PROPERTY(PageFit pageFitMode READ pageFitMode WRITE setPageFitMode)
 
 public:
-    enum PageFit { FIT_WIDTH,
-                   FIT_HEIGHT,
-                   FIT_PAGE,
-                   FIT_MANUAL
-                 };
+
+    enum NavigationMode{
+        NAVIGATION_POINTER,
+        NAVIGATION_DRAG
+    };
+
+    enum PageFit {
+        FIT_WIDTH,
+        FIT_HEIGHT,
+        FIT_PAGE,
+        FIT_MANUAL
+    };
 
     explicit PageView(QWidget *parent = 0);
     virtual ~PageView();
 
     void setBook(RProto::IBook*  book);
+
+    void setNavigationMode(NavigationMode);
+    NavigationMode navigationMode()const{
+        return navigation_mode;
+    }
 
     int page()const{
         return currentPage;
@@ -67,6 +81,7 @@ private:
     IRendererPtr renderer;
     QList<ImageTilePtr>    tiles;
 
+    NavigationMode navigation_mode;
     PageFit  fitMode;
     int      currentPage;
     QPoint   currentOffset;
