@@ -21,6 +21,11 @@ public slots:
     void onUpdateTitle(QString new_title);
     void onOpenFile();
     void onNavigationMode(bool checked);
+    void onFullScreen(bool checked);
+    void onZoomIn();
+    void onZoomOut();
+    void onRotateCW();
+    void onRotateCCW();
 
 protected:
     virtual void closeEvent(QCloseEvent *event);

@@ -68,7 +68,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
     QAction* openFile = toolbar->addAction(QIcon(":/icons/open"), tr("&Open File"), this, SLOT(onOpenFile()));
     openFile->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O));
 
-    QAction* fullscreenMode = toolbar->addAction(QIcon(":/icons/fullscreen"), tr("&Fullscreen Mode")/*, this, SLOT(onOpenFile())*/);
+    QAction* fullscreenMode = toolbar->addAction(QIcon(":/icons/fullscreen"), tr("&Fullscreen Mode"), this, SLOT(onFullScreen(bool)));
     fullscreenMode->setShortcut(QKeySequence(Qt::Key_F11));
     fullscreenMode->setCheckable(true);
 
@@ -76,11 +76,17 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
     navMode->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_N));
     navMode->setCheckable(true);
 
-    QAction* zoomOut = toolbar->addAction(QIcon(":/icons/zoom_out"), tr("&Zoom Out")/*, this, SLOT(onOpenFile())*/);
+    QAction* zoomOut = toolbar->addAction(QIcon(":/icons/zoom_out"), tr("&Zoom Out"), this, SLOT(onZoomOut()));
     zoomOut->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Minus));
 
-    QAction* zoomIn = toolbar->addAction(QIcon(":/icons/zoom_in"), tr("&Zoom In")/*, this, SLOT(onOpenFile())*/);
-    zoomOut->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Plus));
+    QAction* zoomIn = toolbar->addAction(QIcon(":/icons/zoom_in"), tr("&Zoom In"), this, SLOT(onZoomIn()));
+    zoomIn->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Plus));
+
+    QAction* rotateCCW = toolbar->addAction(QIcon(":/icons/rotate_ccw"), tr("&Rotate Counterclockwise"), this, SLOT(onRotateCCW()));
+    rotateCCW->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));
+
+    QAction* rotateCW = toolbar->addAction(QIcon(":/icons/rotate_cw"), tr("&Rotate Clockwise"), this, SLOT(onRotateCW()));
+    rotateCW->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
 
     addToolBar(toolbar);
 
@@ -138,3 +144,27 @@ void MainWindow::onNavigationMode(bool checked){
     else
         pageView->setNavigationMode(PageView::NAVIGATION_POINTER);
 }
+
+void MainWindow::onFullScreen(bool checked){
+    if(checked)
+        setWindowState(Qt::WindowFullScreen);
+    else
+        setWindowState(Qt::WindowActive);
+}
+
+void MainWindow::onZoomIn(){
+
+}
+
+void MainWindow::onZoomOut(){
+
+}
+
+void MainWindow::onRotateCW(){
+
+}
+
+void MainWindow::onRotateCCW(){
+
+}
+

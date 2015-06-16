@@ -5,5 +5,7 @@
         <file alias="fullscreen">resources/icons/view_fullscreen.png</file>
         <file alias="zoom_in">resources/icons/zoom_in.png</file>
         <file alias="zoom_out">resources/icons/zoom_out.png</file>
+        <file alias="rotate_ccw">resources/icons/rotate_ccw.png</file>
+        <file alias="rotate_cw">resources/icons/rotate_cw.png</file>
     </qresource>
 </RCC>
