@@ -7,6 +7,8 @@
 #include <ilayout.h>
 #include <irenderer.h>
 
+class DragHelper;
+
 class PageView : public QAbstractScrollArea, private RProto::ILayoutListener
 {
     Q_OBJECT
@@ -87,6 +89,7 @@ private:
     QPoint   currentOffset;
 
     bool     clearPage;
+    DragHelper *dragHelper;
 
     void setNewPage(int num);
 

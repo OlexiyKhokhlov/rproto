@@ -1,4 +1,5 @@
 #include "pageview.h"
+#include "draghelper.h"
 
 #include <utility>
 #include <QAction>
@@ -32,6 +33,8 @@ PageView::PageView(QWidget *parent) :
 
     viewport()->setMouseTracking(true);
 
+    dragHelper = new DragHelper(this, this);
+
     connect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(onScrollBarValueChanged(int)));
     connect(horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(onScrollBarValueChanged(int)));
 }
@@ -62,10 +65,13 @@ void PageView::setBook(RProto::IBook*  bk)
 
 void PageView::setNavigationMode(NavigationMode mode){
     navigation_mode = mode;
-    if(navigation_mode == NAVIGATION_DRAG)
-        setCursor(Qt::OpenHandCursor);
-    else
-        setCursor(Qt::ArrowCursor);
+    if(navigation_mode == NAVIGATION_DRAG){
+        dragHelper->setEnabled(true);
+        viewport()->setCursor(Qt::OpenHandCursor);
+    }else{
+        dragHelper->setEnabled(false);
+        viewport()->setCursor(Qt::ArrowCursor);
+    }
 }
 
 void PageView::setPage(int pg){

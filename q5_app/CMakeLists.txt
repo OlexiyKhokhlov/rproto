@@ -22,6 +22,7 @@ set(reader_HEADERS
     pageview.h
     contentmodel.h
     contentview.h
+    draghelper.h
 )
 
 set(reader_SOURCES
@@ -31,6 +32,7 @@ set(reader_SOURCES
     pageview.cpp
     contentmodel.cpp
     contentview.cpp
+    draghelper.cpp
 )
 
 add_executable(reader
