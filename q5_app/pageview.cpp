@@ -134,7 +134,7 @@ void PageView::pageDown()
     if(layout.Get() == nullptr)
         return;
 
-    int page_height = layout->pageSize().second * layout->pageZoom(currentPage);
+    int page_height = layout->pageSize(currentPage).second * layout->pageZoom(currentPage);
     int wp_height = viewport()->height();
     if(wp_height < page_height){
         auto oldY = currentOffset.y();
@@ -274,19 +274,19 @@ void PageView::updateScrollBars()
     auto sz = layout->pageSize(currentPage);
     auto zoomFactor = layout->pageZoom(currentPage);
     QSize size(sz.first*zoomFactor, sz.second*zoomFactor);
-    verticalScrollBar()->setPageStep(viewport()->size().height());
-    horizontalScrollBar()->setPageStep(viewport()->size().width());
+    verticalScrollBar()->setPageStep(viewport()->height());
+    horizontalScrollBar()->setPageStep(viewport()->width());
 
-    verticalScrollBar()->setRange(0, size.height() - viewport()->size().height());
     verticalScrollBar()->setValue(currentOffset.y());
-    if(size.height() <= viewport()->size().height())
+    verticalScrollBar()->setRange(0, size.height() - viewport()->height());
+    if(size.height() <= viewport()->height())
         verticalScrollBar()->setVisible(false);
     else
         verticalScrollBar()->setVisible(true);
 
-    horizontalScrollBar()->setRange(0, size.width() - viewport()->size().width());
     horizontalScrollBar()->setValue(currentOffset.x());
-    if(size.width() <= viewport()->size().width())
+    horizontalScrollBar()->setRange(0, size.width() - viewport()->width());
+    if(size.width() <= viewport()->width())
         horizontalScrollBar()->setVisible(false);
     else
         horizontalScrollBar()->setVisible(true);

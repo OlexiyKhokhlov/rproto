@@ -16,6 +16,7 @@ class PageView : public QAbstractScrollArea, private RProto::ILayoutListener
     Q_ENUMS(NavigationMode)
     Q_ENUMS(PageFit)
 
+    //Q_PROPERTY(bool showCursor READ iSShowCursor WRITE setShowCursor)
     Q_PROPERTY(NavigationMode navigationMode READ navigationMode WRITE setNavigationMode)
     Q_PROPERTY(int page READ page WRITE setPage NOTIFY pageChanged)
     Q_PROPERTY(float zoom READ zoom WRITE setZoom NOTIFY zoomChanged)
