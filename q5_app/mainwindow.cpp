@@ -153,18 +153,18 @@ void MainWindow::onFullScreen(bool checked){
 }
 
 void MainWindow::onZoomIn(){
-
+    pageView->setZoom(pageView->zoom()*1.1);
 }
 
 void MainWindow::onZoomOut(){
-
+    pageView->setZoom(pageView->zoom()*0.9);
 }
 
 void MainWindow::onRotateCW(){
-
+//not impl
 }
 
 void MainWindow::onRotateCCW(){
-
+//not impl
 }
 
