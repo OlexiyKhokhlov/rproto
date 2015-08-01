@@ -83,6 +83,7 @@ private:
     ILayoutPtr layout;
     IRendererPtr renderer;
     QList<ImageTilePtr>    tiles;
+    QColor     background_color;
 
     NavigationMode navigation_mode;
     PageFit  fitMode;

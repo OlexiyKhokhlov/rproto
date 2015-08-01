@@ -22,6 +22,7 @@ PageView::PageView(QWidget *parent) :
   ,book(nullptr)
   ,layout(nullptr)
   ,renderer(nullptr)
+  ,background_color(Qt::gray)
   ,navigation_mode(NAVIGATION_POINTER)
   ,fitMode(FIT_WIDTH)
   ,currentPage(0)
@@ -220,7 +221,7 @@ void PageView::viewportPaintEvent(QPaintEvent * event)
 {
     if(clearPage || tiles.empty()){
         QPainter    painter(viewport());
-        painter.fillRect(event->rect(), Qt::gray);
+        painter.fillRect(event->rect(), background_color);
         if(!clearPage)
             return;
         clearPage = false;
