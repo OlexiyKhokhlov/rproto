@@ -10,14 +10,17 @@ add_definitions(-DBUILDING_DLL)
 #find_package(g3log REQUIRED)
 #include_directories(${G3LOG_INCLUDE_DIRS})
 
-set(USE_BINUTILS_WORKAROUND ON CACHE BOOL "use gcc-ar and gcc-ranlib instead ar and ranlib (is needed for LTO)")
-
 #3dparty libraries
 set(USE_SYSTEM_FREETYPE ON CACHE BOOL "use system freetype")
 set(USE_SYSTEM_JPEG ON CACHE BOOL "use system libjpeg")
 set(USE_SYSTEM_ZLIB ON CACHE BOOL "use system zlib")
 set(USE_SYSTEM_LCMS2 ON CACHE BOOL "use system lcms2")
-set(USE_SYSTEM_OPENJPEG ON CACHE BOOL "use system openjpeg" )
+if(WIN32)
+  set(USE_SYSTEM_OPENJPEG OFF CACHE BOOL "use system openjpeg" )
+else(WIN32)
+  set(USE_SYSTEM_OPENJPEG ON CACHE BOOL "use system openjpeg" )
+  set(USE_BINUTILS_WORKAROUND ON CACHE BOOL "use gcc-ar and gcc-ranlib instead ar and ranlib (is needed for LTO)")
+endif(WIN32)
 
 #hieroglyphs support
 set(USE_GB1_MAPS OFF CACHE BOOL "use GB1 maps")
