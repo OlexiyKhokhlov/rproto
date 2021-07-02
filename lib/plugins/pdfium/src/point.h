@@ -5,7 +5,7 @@
 class Point : public RProto::BasePoint
 {
 public:
-    Point(RProto::ILayout *lay, int page, double zoom, int x, int y)
+    Point(RProto::ILayoutPtrT lay, int page, double zoom, int x, int y)
         :BasePoint(lay, page, zoom, x, y)
     {}
 };

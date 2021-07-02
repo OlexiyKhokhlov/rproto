@@ -4,13 +4,13 @@
 ContentView::ContentView(QWidget* parent)
     :QTreeView(parent)
 {
-    cmodel = new ContentModel();
+    cmodel = new ContentModel(this);
     setModel(cmodel);
 
     connect(this, SIGNAL(activated(QModelIndex)), this, SLOT(onActivated(QModelIndex)));
 }
 
-void ContentView::setContent(RProto::IContent* c){
+void ContentView::setContent(RProto::IContentPtrT c){
     cmodel->setContent(c);
 }
 

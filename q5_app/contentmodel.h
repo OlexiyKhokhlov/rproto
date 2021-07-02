@@ -1,5 +1,6 @@
 #pragma once
 
+#include <forward.h>
 #include <QAbstractItemModel>
 
 namespace RProto{
@@ -13,7 +14,7 @@ public:
     ContentModel(QObject* parent=0);
     virtual ~ContentModel();
 
-    void setContent(RProto::IContent *c);
+    void setContent(RProto::IContentPtrT c);
 
     //Interface QAbstractItemModel
     virtual int columnCount(const QModelIndex &parent) const override;
@@ -24,5 +25,5 @@ public:
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
 private:
-    RProto::IContent *content;
+    RProto::IContentPtrT content;
 };

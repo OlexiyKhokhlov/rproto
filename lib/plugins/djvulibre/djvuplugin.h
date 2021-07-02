@@ -1,6 +1,5 @@
 #pragma once
 
-#include <core/co_class.h>
 #include <iplugin.h>
 
 #include <libdjvu/ddjvuapi.h>

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <forward.h>
+
 #include <QStringList>
 #include <QHash>
 
@@ -16,7 +18,7 @@ public:
 
     bool registerPlugin(IPlugin* plug);
     QStringList supportedExtensions();
-    IBook* createBook(const QString& path);
+    RProto::IBookPtrT createBook(const QString& path);
 
 private:
     QHash<QString, IPlugin*> pluginTable;

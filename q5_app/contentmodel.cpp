@@ -9,7 +9,7 @@ ContentModel::ContentModel(QObject* parent)
 ContentModel::~ContentModel(){
 }
 
-void ContentModel::setContent(RProto::IContent *c){
+void ContentModel::setContent(RProto::IContentPtrT c){
     beginResetModel();
     content = c;
     endResetModel();

@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 3.2)
 
 add_subdirectory(pdfium)
 
@@ -54,7 +54,6 @@ set(SOURCES
     src/layout.cpp
     src/imagetile.cpp
     src/renderer.cpp
-    src/module.cpp
     src/content.cpp
 )
 
@@ -72,14 +71,13 @@ target_link_libraries(pdfiumglue
     ${JPEG_LIBRARIES}
     ${ZLIB_LIBRARIES}
     ${LCMS2_LIBRARIES}
-    ${OPENJPEG_LIBRARIES}
+    ${OPENJPEG_LIBRARY}
     glue_api
 )
 
 include_directories(
     ${UTF8_INCLUDE_DIR}
     ${FUTIL_INCLUDE_DIR}
-    ${BOSS_INCLUDE_DIR}
     ${CLUE_API_INCLUDE_DIR}
     ${PDFIUM_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/src

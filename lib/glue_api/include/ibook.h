@@ -1,25 +1,17 @@
 #pragma once
 
-#include <core/ibase.h>
-#include <core/ref_obj_ptr.h>
+#include "forward.h"
+#include <memory>
 
-namespace RProto{
+namespace RProto {
 
-class ILayout;
-class IRenderer;
-class IContent;
-
-class IBook : public Boss::Inherit<Boss::IBase>
+class IBook
 {
 public:
-    BOSS_DECLARE_IFACEID("RProto.IBook")
-
     virtual ~IBook(){}
 
-    virtual ILayout* createLayout(double dpix, double dpiy) =0;
-    virtual IRenderer* createRenderer() =0;
-    virtual IContent* createContent() =0;
+    virtual ILayoutPtrT   createLayout(double dpix, double dpiy) = 0;
+    virtual IRendererPtrT createRenderer() = 0;
+    virtual IContentPtrT  createContent() = 0;
 };
 }
-
-typedef Boss::RefObjPtr<RProto::IBook> IBookPtr;

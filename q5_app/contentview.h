@@ -1,5 +1,6 @@
 #pragma once
 
+#include <forward.h>
 #include <QTreeView>
 
 namespace RProto{
@@ -13,7 +14,8 @@ class ContentView : public QTreeView
     Q_PROPERTY(int page READ page WRITE setPage NOTIFY pageChanged)
 public:
     ContentView(QWidget* parent=0);
-    void setContent(RProto::IContent* c);
+
+    void setContent(RProto::IContentPtrT c);
 
     int page()const{
         return current_page;

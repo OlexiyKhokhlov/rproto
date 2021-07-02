@@ -1,26 +1,26 @@
 #pragma once
 
-#include <ipoint.h>
-#include <core/co_class.h>
+#include "ipoint.h"
+#include "forward.h"
 
 namespace RProto {
 
-class BasePoint : public Boss::SimpleCoClass<RProto::IPoint>
+class BasePoint : public RProto::IPoint
 {
 public:
-    BasePoint(ILayout *lay, int page, double zoom, int x, int y);
+    BasePoint(ILayoutPtrT lay, int page, double zoom, int x, int y);
     virtual ~BasePoint();
 
 private:
     //Interface IPoint
-    virtual ILayout* layout()const override;
+    virtual ILayoutPtrT layout()const override;
     virtual int page()const override;
     virtual double zoom()const override;
     virtual int x()const override;
     virtual int y()const override;
 
 private:
-    ILayout *mLayout;
+    ILayoutPtrT mLayout;
     int mPage;
     double mZoom;
     int mX;

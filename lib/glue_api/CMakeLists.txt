@@ -1,6 +1,6 @@
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 3.2)
 
-set(CMAKE_AUTOMOC ON)
+#set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
@@ -9,6 +9,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 #include_directories(${G3LOG_INCLUDE_DIRS})
 
 set(HEADERS
+    include/forward.h
     include/ipoint.h
     include/irect.h
     include/basepoint.h
@@ -37,7 +38,6 @@ target_link_libraries(glue_api
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${BOSS_INCLUDE_DIR}
 )
 
 

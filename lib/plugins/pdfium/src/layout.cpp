@@ -3,17 +3,15 @@
 #include <point.h>
 #include <rect.h>
 
-#include <core/base.h>
-
 #include <fpdfview.h>
 
 #include <assert.h>
 
-Layout::Layout(Book *b, double dpix, double dpiy)
-    :bookOwner(b)
-    ,dpiX(dpix)
-    ,dpiY(dpiy)
-    ,listenerPtr(nullptr)
+Layout::Layout(std::shared_ptr<Book> b, double dpix, double dpiy)
+    : bookOwner(b)
+    , dpiX(dpix)
+    , dpiY(dpiy)
+    , listenerPtr(nullptr)
 {
     assert(bookOwner != nullptr);
 }
@@ -27,12 +25,12 @@ Layout::~Layout()
 }
 
 //ILayout interface
-void Layout::addListener(RProto::ILayoutListener *listener){
+void Layout::addListener(RProto::ILayoutListener* listener){
     listenerPtr = listener;
 }
 
-RProto::IBook* Layout::book(){
-    return (RProto::IBook*)bookOwner;
+RProto::IBookPtrT Layout::book(){
+    return bookOwner;
 }
 
 void Layout::startLayouting(){
@@ -93,22 +91,22 @@ void Layout::setDocumentZoom(double zoom)
     }
 }
 
-RProto::IPoint* Layout::createPoint(int rpage, int x, int y)const
+RProto::IPointPtrT Layout::createPoint(int rpage, int x, int y)
 {
     if((std::size_t)rpage >= page_vector.size())
         return nullptr;
 
     auto zoom = page_vector[rpage].zoom;
-    return Boss::Base<Point>::CreatePtr((RProto::ILayout*)this, rpage, zoom, x, y);
+    return std::make_shared<Point>(shared_from_this(), rpage, zoom, x, y);
 }
 
-RProto::IRect* Layout::createRect(int rpage, int x, int y, int width, int height)const
+RProto::IRectPtrT Layout::createRect(int rpage, int x, int y, int width, int height)
 {
     if((std::size_t)rpage >= page_vector.size())
         return nullptr;
 
     auto zoom = page_vector[rpage].zoom;
-    return Boss::Base<Rect>::CreatePtr((RProto::ILayout*)this, rpage, zoom, x, y, width, height);
+    return std::make_shared<Rect>(shared_from_this(), rpage, zoom, x, y, width, height);
 }
 
 IInternalLayout::PageDescriptor& Layout::getPageDescr(int rpage){

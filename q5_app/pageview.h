@@ -3,6 +3,7 @@
 #include <QPoint>
 #include <QAbstractScrollArea>
 
+#include <forward.h>
 #include <ibook.h>
 #include <ilayout.h>
 #include <irenderer.h>
@@ -39,7 +40,7 @@ public:
     explicit PageView(QWidget *parent = 0);
     virtual ~PageView();
 
-    void setBook(RProto::IBook*  book);
+    void setBook(RProto::IBookPtrT book);
 
     void setNavigationMode(NavigationMode);
     NavigationMode navigationMode()const{
@@ -79,10 +80,10 @@ private:
    void updateViewport();
    void updateScrollBars();
 
-    IBookPtr   book;
-    ILayoutPtr layout;
-    IRendererPtr renderer;
-    QList<ImageTilePtr>    tiles;
+    RProto::IBookPtrT   book;
+    RProto::ILayoutPtrT layout;
+    RProto::IRendererPtrT renderer;
+    QList<RProto::ImageTilePtrT>    tiles;
     QColor     background_color;
 
     NavigationMode navigation_mode;

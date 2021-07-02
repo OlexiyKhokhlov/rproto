@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 3.2)
 
 find_package(DJVULibre REQUIRED)
 
@@ -23,7 +23,6 @@ target_link_libraries(djvuglue
 
 include_directories(
     ${UTIL_INCLUDE_DIR}
-    ${BOSS_INCLUDE_DIR}
     ${CLUE_API_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${DJVULIBRE_INCLUDE_DIR}

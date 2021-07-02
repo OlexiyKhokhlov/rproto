@@ -8,8 +8,6 @@
 #include <fpdfview.h>
 #include "library.h"
 
-#include <core/base.h>
-
 #include <assert.h>
 
 /**
@@ -43,7 +41,7 @@ rotate - Page orientation: 0 (normal), 1 (rotated 90 degrees clockwise),
                                                 //enable when render to a bitmap.
 */
 
-Renderer::Renderer(Book *b)
+Renderer::Renderer(std::shared_ptr<Book> b)
     :bookOwner(b)
 {
     assert(bookOwner != nullptr);
@@ -52,13 +50,13 @@ Renderer::Renderer(Book *b)
 Renderer::~Renderer(){
 }
 
-ImageTilePtr Renderer::renderRect(RProto::IRect *rect)
+RProto::ImageTilePtrT Renderer::renderRect(RProto::IRectPtrT rect)
 {
     auto pdf_page_ptr = bookOwner->getPage(rect->page());
     if(pdf_page_ptr == nullptr)
-        return ImageTilePtr();
+        return nullptr;
 
-    auto tile = Boss::Base<ImageTile>::Create( rect->layout(), rect->page(), rect->zoom(),
+    auto tile = std::make_shared<ImageTile>(rect->layout(), rect->page(), rect->zoom(),
                   rect->x()*rect->zoom(), rect->y()*rect->zoom(),
                   rect->width()*rect->zoom(), rect->height()*rect->zoom() );
 
@@ -73,8 +71,8 @@ ImageTilePtr Renderer::renderRect(RProto::IRect *rect)
     return tile;
 }
 
-ImageTilePtr Renderer::renderThumbnail(RProto::IRect* /*rect*/){
-    return ImageTilePtr();
+RProto::ImageTilePtrT Renderer::renderThumbnail(RProto::IRectPtrT /*rect*/){
+    return nullptr;
 }
 
 void Renderer::addListener(RProto::IRendererListener* /*listener*/){

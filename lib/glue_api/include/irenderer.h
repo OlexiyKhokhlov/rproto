@@ -1,8 +1,6 @@
 #pragma once
 
 #include <iimagetile.h>
-#include <core/ibase.h>
-#include <core/ref_obj_ptr.h>
 
 namespace RProto {
 
@@ -13,17 +11,13 @@ public:
     //void
 };
 
-class IRenderer : public Boss::Inherit<Boss::IBase>
+class IRenderer
 {
 public:
-    BOSS_DECLARE_IFACEID("RProto.IRenderer")
-
     virtual ~IRenderer(){}
   
-    virtual ImageTilePtr renderRect(IRect* rect) =0;
-    virtual ImageTilePtr renderThumbnail(IRect* rect) =0;
+    virtual ImageTilePtrT renderRect(IRectPtrT rect) =0;
+    virtual ImageTilePtrT renderThumbnail(IRectPtrT rect) =0;
     virtual void addListener(IRendererListener *listener)=0;
 };
 }
-
-typedef Boss::RefObjPtr<RProto::IRenderer> IRendererPtr;

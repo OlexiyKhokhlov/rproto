@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.2)
 
 include(ExternalProject)
 
 ExternalProject_Add(
    pdfium
-   GIT_REPOSITORY https://github.com/DrAlexx/pdfium.git
+   GIT_REPOSITORY https://github.com/OlexiyKhokhlov/pdfium.git
 #   GIT_REPOSITORY /home/forth/work/libs/pdfium
    GIT_TAG light_version
    UPDATE_COMMAND git pull

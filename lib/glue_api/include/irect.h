@@ -1,17 +1,13 @@
 #pragma once
 
-#include <core/ibase.h>
+#include "forward.h"
 
 namespace RProto {
 
-class ILayout;
-
-class IRect : public Boss::Inherit<Boss::IBase>
+class IRect
 {
 public:
-    BOSS_DECLARE_IFACEID("RProto.IRect")
-
-    virtual ILayout* layout()const =0;
+    virtual ILayoutPtrT layout()const =0;
     virtual int page()const =0;
     virtual double zoom()const =0;
 

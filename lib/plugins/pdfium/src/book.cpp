@@ -1,6 +1,5 @@
 #include <book.h>
 #include <assert.h>
-#include <core/base.h>
 #include <fpdf_doc.h>
 
 #include <layout.h>
@@ -20,18 +19,18 @@ Book::~Book()
 }
 
 //IBook interface
-RProto::ILayout* Book::createLayout(double dpix, double dpiy)
+RProto::ILayoutPtrT Book::createLayout(double dpix, double dpiy)
 {
-    return Boss::Base<Layout>::CreatePtr(this, dpix, dpiy);
+    return std::make_shared<Layout>(shared_from_this(), dpix, dpiy);
 }
 
-RProto::IRenderer* Book::createRenderer()
+RProto::IRendererPtrT Book::createRenderer()
 {
-    return Boss::Base<Renderer>::CreatePtr(this);
+    return std::make_shared<Renderer>(shared_from_this());
 }
 
-RProto::IContent* Book::createContent(){
-    return Boss::Base<Content>::CreatePtr(pdf_doc);
+RProto::IContentPtrT Book::createContent(){
+    return std::make_shared<Content>(pdf_doc);
 }
 
 std::shared_ptr<Book::Page> Book::getPage(int num){

@@ -1,15 +1,10 @@
 #pragma once
 
 #include <iplugin.h>
-#include <core/co_class.h>
 
 #include <util/visibility.h>
 
-namespace RProto {
-    class IBook;
-}
-
-class DLL_PUBLIC Plugin : public Boss::CoClass<Boss::MakeId("PDFium.Plugin"), RProto::IPlugin>
+class DLL_PUBLIC Plugin : public RProto::IPlugin
 {
 public:
     Plugin();
@@ -17,8 +12,8 @@ public:
 
 private:
     //IPlugin interface
-    virtual RProto::IBook* createBook(const char* file) override;
+    virtual RProto::IBookPtrT createBook(const char* file) override;
     virtual const std::vector<std::string>& fileExtensions() override;
 
-    std::vector<std::string> extensions;
+    std::vector<std::string> extensions = {"pdf"};
 };

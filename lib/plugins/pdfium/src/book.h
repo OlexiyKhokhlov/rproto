@@ -1,11 +1,14 @@
+#pragma once
+
+#include <forward.h>
 #include <ibook.h>
-#include <imagetile.h>
 #include <library.h>
+#include <content.h>
+#include <renderer.h>
+#include <imagetile.h>
 
 #include <util/rlucache.h>
 #include <util/singletone.h>
-
-#include <core/co_class.h>
 
 #include <fpdfview.h>
 
@@ -13,22 +16,22 @@
 #include <thread>
 
 template<>
-struct Weight<ImageTilePtr>{
-    int operator()(ImageTilePtr const& v){
+struct Weight<RProto::ImageTilePtrT>{
+    int operator()(RProto::ImageTilePtrT const& v){
         return v->rect()->page();
     }
 };
 
-class Book : public Boss::CoClass<Boss::MakeId("PDFium.Book"), RProto::IBook>
+class Book : public RProto::IBook, public std::enable_shared_from_this<Book>
 {
 public:
     Book(FPDF_DOCUMENT doc);
     virtual ~Book();
 
     //IBook interface
-    virtual RProto::ILayout* createLayout(double dpix, double dpiy) override;
-    virtual RProto::IRenderer* createRenderer() override;
-    virtual RProto::IContent* createContent() override;
+    virtual RProto::ILayoutPtrT createLayout(double dpix, double dpiy) override;
+    virtual RProto::IRendererPtrT createRenderer() override;
+    virtual RProto::IContentPtrT createContent() override;
 
     //Plugin private
     struct Page{

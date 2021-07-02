@@ -25,7 +25,8 @@ int main(int argc, char *argv[])
     app.setOrganizationDomain("localdomain.com");
     app.setApplicationName("R-proto");
 
-    QString translationsPath = Singletone<QSettings>::instance().value("RProto/translations", QCoreApplication::applicationDirPath()+"/translations/").toString();
+    QSettings settings;
+    QString translationsPath = settings.value("RProto/translations", QCoreApplication::applicationDirPath()+"/translations/").toString();
     QTranslator translator;
     if(translator.load(translationsPath+QLocale::system().name())){
         app.installTranslator(&translator);
@@ -33,7 +34,7 @@ int main(int argc, char *argv[])
          app.installTranslator(&translator);
    }
 
-    MainWindow *mwindow = new MainWindow;
+    MainWindow *mwindow = new MainWindow();
     mwindow->show();
 
     auto retcode = app.exec();

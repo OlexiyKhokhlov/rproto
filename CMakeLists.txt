@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.2)
 project(rproto)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -56,8 +56,6 @@ set(DEBUG_INSTALL_ROOT "${CMAKE_CURRENT_BINARY_DIR}/local_root")
 set(UTF8_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/utf8")
 set(FUTIL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/")
 set(CLUE_API_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/glue_api/include")
-
-set(BOSS_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/BOSS/boss/include")
 
 add_subdirectory(q5_app)
 

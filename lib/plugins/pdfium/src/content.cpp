@@ -29,7 +29,7 @@ const std::string& Content::title(int subcontent_id, int row) const{
     return item->title;
 }
 
-const int Content::pageNumber(int subcontent_id, int row) const{
+int Content::pageNumber(int subcontent_id, int row) const{
     auto item = getItem(subcontent_id, row);
     if(item == nullptr)
         return 0;

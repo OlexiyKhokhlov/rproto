@@ -28,8 +28,9 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
     setMinimumWidth(600);
     setMinimumHeight(400);
 
-    restoreGeometry(Singletone<QSettings>::instance().value("MainWindow/geometry").toByteArray());
-    restoreState(Singletone<QSettings>::instance().value("MainWindow/state").toByteArray());
+    QSettings settings;
+    restoreGeometry(settings.value("MainWindow/geometry").toByteArray());
+    restoreState(settings.value("MainWindow/state").toByteArray());
     
     pageView = new PageView(this);
     setCentralWidget(pageView);
@@ -97,13 +98,16 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
 MainWindow::~MainWindow()
 {
     qDebug() << __FUNCTION__;
-    //delete bookFactory;
+    contentView->setContent(nullptr);
+    pageView->setBook(nullptr);
+    delete bookFactory;
 }
 
 void MainWindow::closeEvent( QCloseEvent* )
 {
-    Singletone<QSettings>::instance().setValue("MainWindow/geometry", saveGeometry());
-    Singletone<QSettings>::instance().setValue("MainWindow/state", saveState());
+    QSettings settings;
+    settings.setValue("MainWindow/geometry", saveGeometry());
+    settings.setValue("MainWindow/state", saveState());
 }
 
 void MainWindow::onUpdateTitle(QString new_title)
@@ -133,6 +137,9 @@ void MainWindow::onOpenFile()
 
 ////    LOG(INFO) << "Start open file" << fileName;
     auto book = bookFactory->createBook(fileName);
+    if (book == nullptr)
+        return;
+
     auto content = book->createContent();
     contentView->setContent(content);
     pageView->setBook(book);

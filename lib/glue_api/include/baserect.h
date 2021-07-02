@@ -1,18 +1,17 @@
 #pragma once
 
 #include <irect.h>
-#include <core/co_class.h>
 
 namespace RProto {
 
-class BaseRect : public Boss::CoClass<Boss::MakeId("RProto.BaseRect"), IRect>
+class BaseRect : public IRect
 {
 public:
-    BaseRect(ILayout *lay, int page, double zoom, int x, int y, int width, int height);
+    BaseRect(ILayoutPtrT lay, int page, double zoom, int x, int y, int width, int height);
     virtual ~BaseRect();
 
     //interface IRect
-    virtual ILayout* layout()const override;
+    virtual ILayoutPtrT layout()const override;
     virtual int page()const override;
     virtual double zoom()const override;
     virtual int x()const override;
@@ -21,7 +20,7 @@ public:
     virtual int height()const override;
 
 private:
-    ILayout *mLayout;
+    ILayoutPtrT mLayout;
     int mPage;
     double mZoom;
     int mX;

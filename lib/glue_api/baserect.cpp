@@ -1,10 +1,9 @@
 #include <baserect.h>
-#include <ilayout.h>
 #include <assert.h>
 
 using namespace RProto;
 
-BaseRect::BaseRect(ILayout *lay, int page, double zoom, int x, int y, int width, int height)
+BaseRect::BaseRect(ILayoutPtrT lay, int page, double zoom, int x, int y, int width, int height)
     : mLayout(lay)
     ,mPage(page)
     ,mZoom(zoom)
@@ -14,16 +13,14 @@ BaseRect::BaseRect(ILayout *lay, int page, double zoom, int x, int y, int width,
     ,mHeight(height)
 {
     assert(mLayout != nullptr);
-    mLayout->AddRef();
 }
 
 BaseRect::~BaseRect()
 {
-    mLayout->Release();
 }
 
 //interface IRect
-ILayout* BaseRect::layout()const
+ILayoutPtrT BaseRect::layout()const
 {
     return mLayout;
 }

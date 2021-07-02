@@ -2,8 +2,6 @@
 #include <iplugin.h>
 #include <ibook.h>
 
-#include <core/module.h>
-#include <core/base.h>
 #include "../lib/plugins/pdfium/src/plugin.h"
 
 #include <QFileInfo>
@@ -12,16 +10,16 @@ using namespace RProto;
 
 BookFactory::BookFactory()
 {
-    //auto ptr = Boss::CreateObject<RProto::IPlugin>(Boss::MakeId("PDFium.Plugin"));
-    auto ptr = Boss::Base<Plugin>::CreatePtr();
-    ptr->AddRef();
-    registerPlugin(ptr);
+//    //auto ptr = Boss::CreateObject<RProto::IPlugin>(Boss::MakeId("PDFium.Plugin"));
+//    auto ptr = Boss::Base<Plugin>::CreatePtr();
+//    ptr->AddRef();
+    registerPlugin(new Plugin());
 }
 
 BookFactory::~BookFactory()
 {
     for(IPlugin* plug : pluginTable.values()){
-        plug->Release();
+        delete plug;
     }
 }
 
@@ -40,7 +38,8 @@ QStringList BookFactory::supportedExtensions()
 {
     return pluginTable.keys();
 }
-IBook* BookFactory::createBook(const QString& path)
+
+RProto::IBookPtrT BookFactory::createBook(const QString& path)
 {
     QFileInfo finfo(path);
     if(finfo.exists() && finfo.isFile()){

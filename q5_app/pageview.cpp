@@ -44,11 +44,15 @@ PageView::~PageView()
 {
 }
 
-void PageView::setBook(RProto::IBook*  bk)
+void PageView::setBook(RProto::IBookPtrT  bk)
 {
     book = bk;
-    if(book.Get() == nullptr)
+    if(book == nullptr) {
+        layout = nullptr;
+        renderer = nullptr;
+        tiles.clear();
         return;
+    }
 
     auto dpiX = QApplication::desktop()->physicalDpiX();
     auto dpiY = QApplication::desktop()->physicalDpiY();
@@ -76,7 +80,7 @@ void PageView::setNavigationMode(NavigationMode mode){
 }
 
 void PageView::setPage(int pg){
-    if(layout.Get() == nullptr)
+    if(layout == nullptr)
         return;
 
     auto page = std::max(0, pg);
@@ -90,13 +94,13 @@ void PageView::setPage(int pg){
 }
 
 float PageView::zoom()const{
-    if(layout.Get() == nullptr)
+    if(layout == nullptr)
         return 1.0;
     return layout->pageZoom(currentPage);
 }
 
 void PageView::setZoom(float zm){
-    if(layout.Get() == nullptr)
+    if(layout == nullptr)
         return;
 
     layout->setPageZoom(zm);
@@ -111,7 +115,7 @@ void PageView::setPageFitMode(PageFit fit){
 
 void PageView::pageUp()
 {
-    if(layout.Get() == nullptr)
+    if(layout == nullptr)
         return;
 
     int page_height = layout->pageSize().second * layout->pageZoom(currentPage);
@@ -132,7 +136,7 @@ void PageView::pageUp()
 
 void PageView::pageDown()
 {
-    if(layout.Get() == nullptr)
+    if(layout == nullptr)
         return;
 
     int page_height = layout->pageSize(currentPage).second * layout->pageZoom(currentPage);
@@ -154,7 +158,7 @@ void PageView::pageDown()
 }
 
 void PageView::toHome(){
-    if(layout.Get() == nullptr)
+    if(layout == nullptr)
         return;
 
     if(currentPage != 0){
@@ -163,7 +167,7 @@ void PageView::toHome(){
 }
 
 void PageView::toEnd(){
-    if(layout.Get() == nullptr)
+    if(layout == nullptr)
         return;
 
     if(currentPage != layout->pages()-1){
@@ -254,22 +258,20 @@ void PageView::onScrollBarValueChanged(int /*value*/)
 
 void PageView::updateViewport()
 {
-    if(layout.Get() == nullptr)
+    if(layout == nullptr)
         return;
 
     auto sz = layout->pageSize(currentPage);
     auto lrect = layout->createRect(currentPage,
                                      0, 0,
                                      sz.first, sz.second);
-    lrect->AddRef();
     auto tile = renderer->renderRect(lrect);
-    lrect->Release();
     tiles.push_back(tile);
 }
 
 void PageView::updateScrollBars()
 {
-    if(layout.Get() == nullptr)
+    if(layout == nullptr)
         return;
 
     auto sz = layout->pageSize(currentPage);

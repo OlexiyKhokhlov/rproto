@@ -1,10 +1,10 @@
 #include <basepoint.h>
-#include <ilayout.h>
+#include <forward.h>
 #include <assert.h>
 
 using namespace RProto;
 
-BasePoint::BasePoint(ILayout *lay, int page, double zoom, int x, int y)
+BasePoint::BasePoint(ILayoutPtrT lay, int page, double zoom, int x, int y)
     :mLayout(lay)
     ,mPage(page)
     ,mZoom(zoom)
@@ -12,16 +12,14 @@ BasePoint::BasePoint(ILayout *lay, int page, double zoom, int x, int y)
     ,mY(y)
 {
     assert(mLayout != nullptr);
-    mLayout->AddRef();
 }
 
 BasePoint::~BasePoint()
 {
-    mLayout->Release();
 }
 
 //Interface IPoint
-ILayout* BasePoint::layout()const
+RProto::ILayoutPtrT BasePoint::layout()const
 {
     return mLayout;
 }

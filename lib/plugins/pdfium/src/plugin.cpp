@@ -3,12 +3,9 @@
 #include <book.h>
 #include "library.h"
 
-#include <core/base.h>
-
 Plugin::Plugin()
 {
     Singletone<Library>::instance().Init();
-    extensions.push_back("pdf");
 }
 
 Plugin::~Plugin()
@@ -17,7 +14,7 @@ Plugin::~Plugin()
 }
 
 //IPlugin interface
-RProto::IBook* Plugin::createBook(const char* file)
+RProto::IBookPtrT Plugin::createBook(const char* file)
 {
     Singletone<Library>::instance().BLL_lock();
     FPDF_DOCUMENT pdf_doc = FPDF_LoadDocument(file, nullptr);
@@ -25,9 +22,7 @@ RProto::IBook* Plugin::createBook(const char* file)
     if(pdf_doc == nullptr)
         return nullptr;
 
-    auto book = Boss::Base<Book>::CreatePtr(pdf_doc);
-    book->AddRef();
-    return book;
+    return std::make_shared<Book>(pdf_doc);
 }
 
 const std::vector<std::string>& Plugin::fileExtensions()

@@ -1,11 +1,10 @@
 #pragma once
 
-#include <core/co_class.h>
 #include <icontent.h>
 #include <fpdfview.h>
 #include <vector>
 
-class Content : public Boss::CoClass<Boss::MakeId("PDFium.Book"), RProto::IContent>
+class Content : public RProto::IContent
 {
 public:
     Content(FPDF_DOCUMENT doc);
@@ -14,7 +13,7 @@ public:
     //Interface IContent
     virtual void addListener(RProto::IContentListener *listener) override;
     virtual const std::string& title(int subcontent_id, int row) const override;
-    virtual const int pageNumber(int subcontent_id, int row) const override;
+    virtual int pageNumber(int subcontent_id, int row) const override;
     virtual std::pair<int,int> parentId(int subcontent_id) const override;
     virtual int childsId(int parent_id, int parent_row) const override;
     virtual int rowCount(int subcontent_id) const override;

@@ -1,24 +1,22 @@
 #pragma once
 
-#include <core/co_class.h>
-
 #include <irenderer.h>
 
 class Book;
 
-class Renderer : public Boss::CoClass<Boss::MakeId("PDFium.Renderer"), RProto::IRenderer>
+class Renderer : public RProto::IRenderer
 {
 public:
-    explicit Renderer(Book *book);
+    explicit Renderer(std::shared_ptr<Book> book);
     virtual ~Renderer();
 
     // IRenderer interface
-    virtual ImageTilePtr renderRect(RProto::IRect *rect) override;
-    virtual ImageTilePtr renderThumbnail(RProto::IRect* rect) override;
+    virtual RProto::ImageTilePtrT renderRect(RProto::IRectPtrT rect) override;
+    virtual RProto::ImageTilePtrT renderThumbnail(RProto::IRectPtrT rect) override;
     virtual void addListener(RProto::IRendererListener *listener) override;
 
 private:
-    Book *bookOwner;
+    std::shared_ptr<Book> bookOwner;
 };
 
 
