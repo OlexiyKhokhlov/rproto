@@ -5,7 +5,6 @@ include(ExternalProject)
 ExternalProject_Add(
    pdfium
    GIT_REPOSITORY https://github.com/OlexiyKhokhlov/pdfium.git
-#   GIT_REPOSITORY /home/forth/work/libs/pdfium
    GIT_TAG light_version
    UPDATE_COMMAND git pull
    CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
