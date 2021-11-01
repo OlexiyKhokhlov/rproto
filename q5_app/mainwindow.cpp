@@ -2,12 +2,11 @@
 #include "pageview.h"
 #include "contentview.h"
 
-#include <util/singletone.h>
 #include <bookfactory.h>
 #include <ibook.h>
 
-//#include <g3log/g2log.hpp>
-
+#include <QLineEdit>
+#include <QLabel>
 #include <QSettings>
 #include <QFileDialog>
 #include <QAction>
@@ -15,16 +14,13 @@
 #include <QToolBar>
 #include <QToolButton>
 #include <QHBoxLayout>
+#include <QComboBox>
+#include <QSpinBox>
 #include <QDebug>
 
-MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
-    QMainWindow(parent, flags)
-    ,bookFactory(nullptr)
+MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags)
+    : QMainWindow(parent, flags)
 {
-//    bookFactory = new RProto::BookFactory();
-//    RProto::DjVuPlugin* plug = new RProto::DjVuPlugin();
-//    bookFactory->registerPlugin(plug);
-
     setMinimumWidth(600);
     setMinimumHeight(400);
 
@@ -57,7 +53,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
     addAction(end);
     connect(end, SIGNAL(triggered(bool)), pageView, SLOT(toEnd()));
 
-    QDockWidget* contentDock = new QDockWidget("Contents", nullptr);
+    QDockWidget* contentDock = new QDockWidget(tr("Content"), nullptr);
     contentDock->setObjectName("ContentDock");
     contentView = new ContentView(contentDock);
     contentDock->setWidget(contentView);
@@ -67,10 +63,10 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
     toolbar->setObjectName("MainToolBar");
 
     QAction* openFile = toolbar->addAction(QIcon(":/icons/open"), tr("&Open File"), this, SLOT(onOpenFile()));
-    openFile->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O));
+    openFile->setShortcut(QKeySequence(QKeySequence::Open));
 
     QAction* fullscreenMode = toolbar->addAction(QIcon(":/icons/fullscreen"), tr("&Fullscreen Mode"), this, SLOT(onFullScreen(bool)));
-    fullscreenMode->setShortcut(QKeySequence(Qt::Key_F11));
+    fullscreenMode->setShortcut(QKeySequence(QKeySequence::FullScreen));
     fullscreenMode->setCheckable(true);
 
     QAction* navMode = toolbar->addAction(QIcon(":/icons/mouse"), tr("&Navigation Mode"), this, SLOT(onNavigationMode(bool)));
@@ -78,10 +74,18 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
     navMode->setCheckable(true);
 
     QAction* zoomOut = toolbar->addAction(QIcon(":/icons/zoom_out"), tr("&Zoom Out"), this, SLOT(onZoomOut()));
-    zoomOut->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Minus));
+    zoomOut->setShortcut(QKeySequence(QKeySequence::ZoomOut));
+
+    zoomCombo = new QComboBox(toolbar);
+    zoomCombo->addItem(tr("Fit width"),  QVariant::fromValue(PageView::PageFit::FIT_WIDTH));
+    zoomCombo->addItem(tr("Fit height"), QVariant::fromValue(PageView::PageFit::FIT_HEIGHT));
+    zoomCombo->addItem(tr("Fit page"),   QVariant::fromValue(PageView::PageFit::FIT_PAGE));
+    zoomCombo->addItem(tr("Manual"),     QVariant::fromValue(PageView::PageFit::FIT_MANUAL));
+    connect(zoomCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(onFitChanged(int)));
+    toolbar->addWidget(zoomCombo);
 
     QAction* zoomIn = toolbar->addAction(QIcon(":/icons/zoom_in"), tr("&Zoom In"), this, SLOT(onZoomIn()));
-    zoomIn->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Plus));
+    zoomIn->setShortcut(QKeySequence(QKeySequence::ZoomIn));
 
     QAction* rotateCCW = toolbar->addAction(QIcon(":/icons/rotate_ccw"), tr("&Rotate Counterclockwise"), this, SLOT(onRotateCCW()));
     rotateCCW->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));
@@ -89,18 +93,30 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags) :
     QAction* rotateCW = toolbar->addAction(QIcon(":/icons/rotate_cw"), tr("&Rotate Clockwise"), this, SLOT(onRotateCW()));
     rotateCW->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
 
+    toolbar->addSeparator();
+    toolbar->addWidget(new QLabel(tr("Page"), toolbar));
+    page_spin = new QSpinBox(toolbar);
+    page_spin->setRange(1, 1);
+    connect(page_spin, SIGNAL(valueChanged(int)), this, SLOT(onPageChanged(int)));
+    toolbar->addWidget(page_spin);
+    max_page = new QLabel("/1", toolbar);
+    toolbar->addWidget(max_page);
+
+    toolbar->addSeparator();
+//    toolbar->addWidget(new QLabel(tr("Search:"), toolbar));
+//    toolbar->addWidget(new QLineEdit(toolbar));
+
     addToolBar(toolbar);
 
     connect(contentView, SIGNAL(pageChanged(int)), pageView, SLOT(setPage(int)));
-    bookFactory = new RProto::BookFactory();
+
+    bookFactory = std::make_unique<RProto::BookFactory>();
 }
 
 MainWindow::~MainWindow()
 {
-    qDebug() << __FUNCTION__;
     contentView->setContent(nullptr);
     pageView->setBook(nullptr);
-    delete bookFactory;
 }
 
 void MainWindow::closeEvent( QCloseEvent* )
@@ -122,34 +138,33 @@ void MainWindow::onUpdateTitle(QString new_title)
 
 void MainWindow::onOpenFile()
 {
-    QString fileName = QFileDialog::getOpenFileName(this,
+    QString file_path = QFileDialog::getOpenFileName(this,
                                                     tr("Open File"),
                                                     "",
                                                     tr("Book Files (%1)").arg("*.pdf"),
                                                     0,
                                                     QFileDialog::DontUseNativeDialog );
-    if(fileName.isEmpty())
+    if(file_path.isEmpty())
       return;
 
-//    Plugin *pl = new Plugin();
-
-//    auto book = pl->createBook(fileName.toLocal8Bit().constData());
-
-////    LOG(INFO) << "Start open file" << fileName;
-    auto book = bookFactory->createBook(fileName);
+    auto book = bookFactory->createBook(file_path);
     if (book == nullptr)
         return;
 
     auto content = book->createContent();
     contentView->setContent(content);
     pageView->setBook(book);
+
+    auto mpg = pageView->getMaxPage()+1;
+    page_spin->setRange(1, mpg);
+    max_page->setText(QString("/%1").arg(mpg));
 }
 
 void MainWindow::onNavigationMode(bool checked){
     if(checked)
-        pageView->setNavigationMode(PageView::NAVIGATION_DRAG);
+        pageView->setNavigationMode(PageView::NavigationMode::NAVIGATION_DRAG);
     else
-        pageView->setNavigationMode(PageView::NAVIGATION_POINTER);
+        pageView->setNavigationMode(PageView::NavigationMode::NAVIGATION_POINTER);
 }
 
 void MainWindow::onFullScreen(bool checked){
@@ -161,6 +176,13 @@ void MainWindow::onFullScreen(bool checked){
 
 void MainWindow::onZoomIn(){
     pageView->setZoom(pageView->zoom()*1.1);
+}
+
+void MainWindow::onFitChanged(int index) {
+    if (index != -1) {
+        auto fit = zoomCombo->itemData(index).value<PageView::PageFit>();
+        pageView->setPageFitMode(fit);
+    }
 }
 
 void MainWindow::onZoomOut(){
@@ -175,3 +197,6 @@ void MainWindow::onRotateCCW(){
 //not impl
 }
 
+void MainWindow::onPageChanged(int nr) {
+    pageView->setPage(nr-1);
+}

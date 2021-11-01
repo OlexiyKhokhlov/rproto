@@ -13,7 +13,7 @@ list(REMOVE_DUPLICATES CMAKE_MODULE_PATH)
 set(USE_QT4 OFF CACHE BOOL "use Qt4 or Qt5")
 
 #Enable C++0x
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wc++0x-compat -Wall -Wextra -pipe -fno-rtti -fvisibility=hidden")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -std=c++20 -Wc++20-compat -Wall -Wextra -pipe -fno-rtti -fvisibility=hidden")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -pipe -fvisibility=hidden")
 
 set(CMAKE_CXX_FLAGS_DEBUG "-ggdb -O0 -fno-omit-frame-pointer")

@@ -1,12 +1,13 @@
 #include "draghelper.h"
+
 #include <QAbstractScrollArea>
 #include <QMouseEvent>
 #include <QScrollBar>
 
 DragHelper::DragHelper(QAbstractScrollArea *a, QObject* parent)
-    :QObject(parent)
-    ,area(a)
-    ,enabled(false)
+    : QObject(parent)
+    , area(a)
+    , enabled(false)
 {
     if(area != nullptr && area->viewport() != nullptr){
         area->viewport()->installEventFilter(this);

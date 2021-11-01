@@ -12,6 +12,7 @@ class ContentView : public QTreeView
 {
     Q_OBJECT
     Q_PROPERTY(int page READ page WRITE setPage NOTIFY pageChanged)
+
 public:
     ContentView(QWidget* parent=0);
 

@@ -10,6 +10,7 @@ class DragHelper : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled)
+
 public:
     DragHelper(QAbstractScrollArea *area, QObject* parent=nullptr);
     virtual ~DragHelper(){}

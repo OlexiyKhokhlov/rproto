@@ -2,6 +2,7 @@
 
 #include <QPoint>
 #include <QAbstractScrollArea>
+#include <QAbstractItemDelegate>
 
 #include <forward.h>
 #include <ibook.h>
@@ -14,9 +15,6 @@ class PageView : public QAbstractScrollArea, private RProto::ILayoutListener
 {
     Q_OBJECT
 
-    Q_ENUMS(NavigationMode)
-    Q_ENUMS(PageFit)
-
     //Q_PROPERTY(bool showCursor READ iSShowCursor WRITE setShowCursor)
     Q_PROPERTY(NavigationMode navigationMode READ navigationMode WRITE setNavigationMode)
     Q_PROPERTY(int page READ page WRITE setPage NOTIFY pageChanged)
@@ -25,17 +23,19 @@ class PageView : public QAbstractScrollArea, private RProto::ILayoutListener
 
 public:
 
-    enum NavigationMode{
+    enum class NavigationMode{
         NAVIGATION_POINTER,
         NAVIGATION_DRAG
     };
+    Q_ENUM(NavigationMode)
 
-    enum PageFit {
+    enum class PageFit {
         FIT_WIDTH,
         FIT_HEIGHT,
         FIT_PAGE,
         FIT_MANUAL
     };
+    Q_ENUM(PageFit)
 
     explicit PageView(QWidget *parent = 0);
     virtual ~PageView();
@@ -50,6 +50,9 @@ public:
     int page()const{
         return currentPage;
     }
+
+    int getMaxPage();
+
     float zoom()const;
     PageFit pageFitMode()const{
         return fitMode;
@@ -79,24 +82,27 @@ private slots:
 private:
    void updateViewport();
    void updateScrollBars();
+   void updateBySize(const QSize& size);
 
-    RProto::IBookPtrT   book;
-    RProto::ILayoutPtrT layout;
-    RProto::IRendererPtrT renderer;
+    RProto::IBookPtrT               book     = nullptr;
+    RProto::ILayoutPtrT             layout   = nullptr;
+    RProto::IRendererPtrT           renderer = nullptr;
     QList<RProto::ImageTilePtrT>    tiles;
-    QColor     background_color;
 
-    NavigationMode navigation_mode;
-    PageFit  fitMode;
-    int      currentPage;
-    QPoint   currentOffset;
+    QColor         background_color = Qt::gray;
+    int            page_gap         = 10;
+    NavigationMode navigation_mode  = NavigationMode::NAVIGATION_POINTER;
+    PageFit        fitMode          = PageFit::FIT_WIDTH;
+    int            currentPage      = 0;
+    QPoint         currentOffset;
 
-    bool     clearPage;
-    DragHelper *dragHelper;
+    bool           clearPage        = false;
+    DragHelper*    dragHelper       = nullptr;
 
     void setNewPage(int num);
+    float getPageZoom(int page, const QSize& viewport_size);
 
     //Interface RProto::ILayoutListener
-    virtual void onPageCountChanged(int count) override;
-    virtual void onPageSizeChanged(int page, int width, int height) override;
+    virtual void onPageCountChanged(int count) final;
+    virtual void onPageSizeChanged(int page, int width, int height) final;
 };

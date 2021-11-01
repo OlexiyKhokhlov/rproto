@@ -4,6 +4,7 @@
 
 #include <libdjvu/ddjvuapi.h>
 
+#include <atomic>
 #include <unordered_map>
 #include <thread>
 #include <mutex>
@@ -15,7 +16,7 @@ namespace RProto {
 
 class DjVuBook;
 
-class DjVuPlugin : public Boss::CoClass<Boss::MakeId("DjVuLibre.DjVuPlugin"), RProto::IPlugin>
+class DjVuPlugin : RProto::IPlugin
 {
 public:
     DjVuPlugin();
@@ -36,7 +37,7 @@ private:
     std::thread     message_thread;
     std::mutex      msgMutex;
     std::condition_variable msgConditional;
-    volatile bool stopListener;
+    std::atomic<bool >stopListener;
 
     void messageLoop();
     static void msg_callback(ddjvu_context_t *context, void *closure);

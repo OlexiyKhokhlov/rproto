@@ -1,6 +1,8 @@
 #include "contentview.h"
 #include "contentmodel.h"
 
+#include <QHeaderView>
+
 ContentView::ContentView(QWidget* parent)
     :QTreeView(parent)
 {
@@ -12,6 +14,15 @@ ContentView::ContentView(QWidget* parent)
 
 void ContentView::setContent(RProto::IContentPtrT c){
     cmodel->setContent(c);
+
+    if (c != nullptr) {
+        auto* h = header();
+        h->setStretchLastSection(false);
+        h->setSectionResizeMode(0, QHeaderView::Stretch);
+        h->setSectionResizeMode(h->count()-1, QHeaderView::ResizeToContents);
+        h->resetDefaultSectionSize();
+        setHeaderHidden(true);
+    }
 }
 
 void ContentView::setPage(int p){

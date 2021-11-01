@@ -17,20 +17,12 @@
 #include <irect.h>
 #include <ipoint.h>
 
-PageView::PageView(QWidget *parent) :
-    QAbstractScrollArea(parent)
-  ,book(nullptr)
-  ,layout(nullptr)
-  ,renderer(nullptr)
-  ,background_color(Qt::gray)
-  ,navigation_mode(NAVIGATION_POINTER)
-  ,fitMode(FIT_WIDTH)
-  ,currentPage(0)
-  ,clearPage(false)
+PageView::PageView(QWidget *parent)
+    : QAbstractScrollArea(parent)
 {
     viewport()->setAttribute(Qt::WA_OpaquePaintEvent);
     viewport()->setAttribute(Qt::WA_NoSystemBackground);
-    //viewport()->setAttribute(Qt::WA_PaintOnScreen);
+//    /viewport()->setAttribute(Qt::WA_PaintOnScreen);
 
     viewport()->setMouseTracking(true);
 
@@ -40,8 +32,7 @@ PageView::PageView(QWidget *parent) :
     connect(horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(onScrollBarValueChanged(int)));
 }
 
-PageView::~PageView()
-{
+PageView::~PageView() {
 }
 
 void PageView::setBook(RProto::IBookPtrT  bk)
@@ -60,8 +51,7 @@ void PageView::setBook(RProto::IBookPtrT  bk)
     layout = book->createLayout(dpiX, dpiY);
     renderer = book->createRenderer();
 
-    auto listener = static_cast<RProto::ILayoutListener*>(this);
-    layout->addListener(listener);
+    layout->addListener(this);
 
     layout->startLayouting();
     currentOffset = QPoint(0,0);
@@ -70,7 +60,7 @@ void PageView::setBook(RProto::IBookPtrT  bk)
 
 void PageView::setNavigationMode(NavigationMode mode){
     navigation_mode = mode;
-    if(navigation_mode == NAVIGATION_DRAG){
+    if(navigation_mode == NavigationMode::NAVIGATION_DRAG){
         dragHelper->setEnabled(true);
         viewport()->setCursor(Qt::OpenHandCursor);
     }else{
@@ -93,6 +83,10 @@ void PageView::setPage(int pg){
     }
 }
 
+int PageView::getMaxPage() {
+    return layout == nullptr? 1 : layout->pages();
+}
+
 float PageView::zoom()const{
     if(layout == nullptr)
         return 1.0;
@@ -111,6 +105,7 @@ void PageView::setZoom(float zm){
 
 void PageView::setPageFitMode(PageFit fit){
     fitMode = fit;
+    updateBySize(viewport()->size());
 }
 
 void PageView::pageUp()
@@ -134,8 +129,7 @@ void PageView::pageUp()
     }
 }
 
-void PageView::pageDown()
-{
+void PageView::pageDown() {
     if(layout == nullptr)
         return;
 
@@ -143,8 +137,8 @@ void PageView::pageDown()
     int wp_height = viewport()->height();
     if(wp_height < page_height){
         auto oldY = currentOffset.y();
-        auto newY = std::min(page_height-viewport()->height()
-                               ,oldY+viewport()->height());
+        auto newY = std::min(page_height-viewport()->height(),
+                             oldY+viewport()->height());
         if(oldY != newY){
             verticalScrollBar()->setValue(newY);
             return;
@@ -175,11 +169,9 @@ void PageView::toEnd(){
     }
 }
 
-void PageView::resizeEvent(QResizeEvent* /*event*/)
+void PageView::resizeEvent(QResizeEvent* event)
 {
-    tiles.clear();
-    updateScrollBars();
-    updateViewport();
+    updateBySize(event->size());
 }
 
 bool PageView::viewportEvent(QEvent* event)
@@ -234,7 +226,7 @@ void PageView::viewportPaintEvent(QPaintEvent * event)
     if(tiles.empty())
         return;
 
-    auto tile =tiles.front();
+    auto tile = tiles.front();
     QImage img((uchar*)tile->data(), tile->rect()->width(), tile->rect()->height(), QImage::Format_RGB32);
     QPainter  painter(viewport());
     auto dx = std::max(0, (viewport()->width()-tile->rect()->width())/2);
@@ -274,6 +266,8 @@ void PageView::updateScrollBars()
     if(layout == nullptr)
         return;
 
+    //auto pages = layout->pages();
+
     auto sz = layout->pageSize(currentPage);
     auto zoomFactor = layout->pageZoom(currentPage);
     QSize size(sz.first*zoomFactor, sz.second*zoomFactor);
@@ -295,16 +289,33 @@ void PageView::updateScrollBars()
         horizontalScrollBar()->setVisible(true);
 }
 
-void PageView::onPageCountChanged(int /*count*/){
-    //ignore
+void PageView::updateBySize(const QSize& size) {
+    if(layout == nullptr)
+        return;
+
+    tiles.clear();
+    auto zoom = getPageZoom(currentPage, size);
+    layout->setPageZoom(currentPage, zoom);
+
+    updateScrollBars();
+    clearPage = true;
+    updateViewport();
 }
 
-void PageView::onPageSizeChanged(int page, int /*width*/, int /*height*/)
-{
-    if(currentPage == page){
-        updateScrollBars();
-        updateViewport();
-    }
+void PageView::onPageCountChanged(int count) {
+    qDebug() << __FUNCTION__ << "count = " << count;
+    updateScrollBars();
+    updateViewport();
+}
+
+void PageView::onPageSizeChanged(int /*page*/, int width, int height) {
+    qDebug() << __FUNCTION__ << "width = " << width << "height = " << height;
+//    if(currentPage == page){
+//        updateScrollBars();
+//        updateViewport();
+//    }
+    updateScrollBars();
+    updateViewport();
 }
 
 void PageView::setNewPage(int num){
@@ -313,28 +324,7 @@ void PageView::setNewPage(int num){
     currentPage = num;
     currentOffset.setY(0);
 
-    auto size = layout->pageSize(currentPage);
-    float zoomFactor = 1.0;
-
-    switch (fitMode) {
-    case FIT_WIDTH:
-        zoomFactor = (float)viewport()->width()/size.first;
-        break;
-    case FIT_HEIGHT:
-        zoomFactor = (float)viewport()->height()/size.second;
-        break;
-    case FIT_PAGE:
-        zoomFactor = std::min((float)viewport()->width()/size.first
-                 ,(float)viewport()->height()/size.second);
-        break;
-    case FIT_MANUAL:
-        //nothing to do
-        break;
-    default:
-        break;
-    }
-
-    layout->setPageZoom(currentPage, zoomFactor);
+    layout->setPageZoom(currentPage, getPageZoom(currentPage, viewport()->size()));
 
     updateScrollBars();
     clearPage = true;
@@ -342,4 +332,28 @@ void PageView::setNewPage(int num){
     viewport()->update();
 
     emit pageChanged(currentPage);
+}
+
+float PageView::getPageZoom(int page, const QSize& viewport_size) {
+    auto size = layout->pageSize(page);
+    float zoomFactor = 1.0;
+
+    switch (fitMode) {
+    case PageFit::FIT_WIDTH:
+        zoomFactor = (float)viewport_size.width()/size.first;
+        break;
+    case PageFit::FIT_HEIGHT:
+        zoomFactor = (float)viewport_size.height()/size.second;
+        break;
+    case PageFit::FIT_PAGE:
+        zoomFactor = std::min((float)viewport_size.width()/size.first
+                 ,(float)viewport_size.height()/size.second);
+        break;
+    case PageFit::FIT_MANUAL:
+        //nothing to do
+        break;
+    default:
+        break;
+    }
+    return zoomFactor;
 }

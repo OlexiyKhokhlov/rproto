@@ -18,7 +18,7 @@ Layout::Layout(std::shared_ptr<Book> b, double dpix, double dpiy)
 
 Layout::~Layout()
 {
-    for(auto pg : page_vector){
+    for(auto& pg : page_vector){
         if(pg.isValid)
             FPDF_ClosePage(pg.pdf_page);
     }

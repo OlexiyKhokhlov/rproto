@@ -2,8 +2,8 @@
 #include <icontent.h>
 
 ContentModel::ContentModel(QObject* parent)
-    :QAbstractItemModel(parent)
-    ,content(nullptr)
+    : QAbstractItemModel(parent)
+    , content(nullptr)
 {}
 
 ContentModel::~ContentModel(){
@@ -52,6 +52,12 @@ QVariant ContentModel::data(const QModelIndex& index, int role) const{
         if(index.column() == 0)
             return QString::fromUtf8(content->title(index.internalId(), index.row()).c_str());
         return content->pageNumber(index.internalId(), index.row());
+        break;
+    case Qt::TextAlignmentRole:
+        if(index.column() == 0)
+            return Qt::AlignLeft;
+        else
+            return Qt::AlignRight;
         break;
     }
     return QVariant();

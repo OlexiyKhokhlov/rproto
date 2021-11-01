@@ -10,9 +10,6 @@ using namespace RProto;
 
 BookFactory::BookFactory()
 {
-//    //auto ptr = Boss::CreateObject<RProto::IPlugin>(Boss::MakeId("PDFium.Plugin"));
-//    auto ptr = Boss::Base<Plugin>::CreatePtr();
-//    ptr->AddRef();
     registerPlugin(new Plugin());
 }
 

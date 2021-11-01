@@ -2,11 +2,9 @@
 #include "djvubook.h"
 //#include "djvupagelayout.h"
 
-#include <core/base.h>
-
 DjVuPlugin::DjVuPlugin()
-    :djvu_context(nullptr)
-    ,stopListener(false)
+    : djvu_context(nullptr)
+    , stopListener(false)
 {
     djvu_context = ddjvu_context_create("RProto DjVuLibre Plugin");
     if(djvu_context != nullptr){

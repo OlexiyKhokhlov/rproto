@@ -1,17 +1,17 @@
 #pragma once
 
+#include <libdjvu/ddjvuapi.h>
+#include <util/rlucache.h>
+#include <ibook.h>
+
 #include <vector>
 #include <mutex>
 #include <memory>
-#include <libdjvu/ddjvuapi.h>
-#include <core/co_class.h>
-#include <util/rlucache.h>
-#include <ibook.h>
 
 class DjVuPlugin;
 class DjVuPageLayout;
 
-class DjVuBook : public Boss::CoClass<Boss::MakeId("DjVuLibre.DjVuBook"), RProto::IBook>
+class DjVuBook : public RProto::IBook, public std::enable_shared_from_this<DjVuBook>
 {
 public:
     DjVuBook(DjVuPlugin *plugin, ddjvu_document_t* doc);
