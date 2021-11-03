@@ -15,6 +15,32 @@ void ContentModel::setContent(RProto::IContentPtrT c){
     endResetModel();
 }
 
+QModelIndex ContentModel::indexByPage(int page) {
+    if(content == nullptr)
+        return QModelIndex();
+
+    int subcontent_id = 0;
+    int row = 0;
+    while ( row < content->rowCount(subcontent_id)-1) {
+        if (content->pageNumber(subcontent_id, row) == page-1) {
+            break;
+        } else if (content->pageNumber(subcontent_id, row) > page-1) {
+            if (row == 0)
+                break;
+            --row;
+            auto child_id = content->childsId(subcontent_id, row);
+            if (child_id == -1)
+                break;
+            subcontent_id = child_id;
+            row = 0;
+        } else {
+            ++row;
+        }
+    }
+
+    return createIndex(row, 0, subcontent_id);
+}
+
 //Interface QAbstractItemModel
 int ContentModel::columnCount(const QModelIndex& parent) const{
     return content == nullptr? 0 : 2;
@@ -51,7 +77,7 @@ QVariant ContentModel::data(const QModelIndex& index, int role) const{
     case Qt::ToolTipRole:
         if(index.column() == 0)
             return QString::fromUtf8(content->title(index.internalId(), index.row()).c_str());
-        return content->pageNumber(index.internalId(), index.row());
+        return content->pageNumber(index.internalId(), index.row()) + 1;
         break;
     case Qt::TextAlignmentRole:
         if(index.column() == 0)

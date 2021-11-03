@@ -2,6 +2,7 @@
 #include "pageview.h"
 #include "contentview.h"
 #include "filehistoryview.h"
+#include "pagespinbox.h"
 
 #include <bookfactory.h>
 #include <ibook.h>
@@ -66,6 +67,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags)
     QDockWidget* contentDock = new QDockWidget(tr("Content"), nullptr);
     contentDock->setObjectName("ContentDock");
     contentView = new ContentView(contentDock);
+    connect(pageView, SIGNAL(pageChanged(int)), contentView, SLOT(onPageHasChanged(int)));
     contentDock->setWidget(contentView);
     addDockWidget(Qt::LeftDockWidgetArea, contentDock);
 
@@ -106,17 +108,11 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags)
     rotateCW->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
 
     toolbar->addSeparator();
-    toolbar->addWidget(new QLabel(tr("Page"), toolbar));
-    page_spin = new QSpinBox(toolbar);
-    page_spin->setRange(1, 1);
-    connect(page_spin, SIGNAL(valueChanged(int)), this, SLOT(onPageChanged(int)));
-    toolbar->addWidget(page_spin);
-    max_page = new QLabel("/1", toolbar);
-    toolbar->addWidget(max_page);
-
+    pageSpinBox = new PageSpinBox(toolbar);
+    toolbar->addWidget(pageSpinBox);
     toolbar->addSeparator();
-//    toolbar->addWidget(new QLabel(tr("Search:"), toolbar));
-//    toolbar->addWidget(new QLineEdit(toolbar));
+    connect(pageSpinBox, SIGNAL(pageChanged(int)), pageView, SLOT(setPage(int)));
+    connect(pageView, SIGNAL(pageChanged(int)), pageSpinBox, SLOT(onPageHasChanged(int)));
 
     addToolBar(toolbar);
 
@@ -171,9 +167,8 @@ void MainWindow::onOpenFile(const QString& file_path) {
     contentView->setContent(content);
     pageView->setBook(book);
 
-    auto mpg = pageView->getMaxPage()+1;
-    page_spin->setRange(1, mpg);
-    max_page->setText(QString("/%1").arg(mpg));
+    auto mpg = pageView->getMaxPage();
+    pageSpinBox->onMaxPageChanged(mpg);
 
     historyView->onFileOpened(file_path);
 }

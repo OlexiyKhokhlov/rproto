@@ -24,6 +24,9 @@ public:
 signals:
     void pageChanged(int page);
 
+public slots:
+    void onPageHasChanged(int page);
+
 private slots:
     void onActivated(const QModelIndex& index);
 

@@ -18,6 +18,7 @@ set(reader_HEADERS
     contentview.h
     filehistorymodel.h
     filehistoryview.h
+    pagespinbox.h
 )
 
 set(reader_SOURCES
@@ -30,6 +31,7 @@ set(reader_SOURCES
     contentview.cpp
     filehistorymodel.cpp
     filehistoryview.cpp
+    pagespinbox.cpp
 )
 
 add_executable(reader

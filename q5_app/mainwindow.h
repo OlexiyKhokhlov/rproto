@@ -11,6 +11,7 @@ namespace RProto{
 class PageView;
 class ContentView;
 class FileHistoryView;
+class PageSpinBox;
 
 class QComboBox;
 class QSpinBox;
@@ -48,6 +49,5 @@ private:
     FileHistoryView*     historyView = nullptr;
 
     QComboBox*           zoomCombo = nullptr;
-    QSpinBox*            page_spin = nullptr;
-    QLabel*              max_page = nullptr;
+    PageSpinBox*         pageSpinBox = nullptr;
 };

@@ -37,3 +37,12 @@ void ContentView::onActivated(const QModelIndex& index){
         setPage(p);
     }
 }
+
+void ContentView::onPageHasChanged(int page) {
+    auto index = cmodel->indexByPage(page);
+    if (index.isValid()) {
+        blockSignals(true);
+        setCurrentIndex(index);
+        blockSignals(false);
+    }
+}

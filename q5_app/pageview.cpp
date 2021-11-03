@@ -22,7 +22,6 @@ PageView::PageView(QWidget *parent)
 {
     viewport()->setAttribute(Qt::WA_OpaquePaintEvent);
     viewport()->setAttribute(Qt::WA_NoSystemBackground);
-//    /viewport()->setAttribute(Qt::WA_PaintOnScreen);
 
     viewport()->setMouseTracking(true);
 
@@ -73,13 +72,13 @@ void PageView::setPage(int pg){
     if(layout == nullptr)
         return;
 
-    auto page = std::max(0, pg);
+    auto page = std::max(0, pg-1);
     page = std::min(page, layout->pages()-1);
     if(currentPage != page){
         currentPage = page;
         currentOffset = QPoint(0,0);
         setNewPage(currentPage);
-        emit pageChanged(currentPage);
+        emit pageChanged(currentPage+1);
     }
 }
 
@@ -331,7 +330,7 @@ void PageView::setNewPage(int num){
     updateViewport();
     viewport()->update();
 
-    emit pageChanged(currentPage);
+    emit pageChanged(currentPage+1);
 }
 
 float PageView::getPageZoom(int page, const QSize& viewport_size) {

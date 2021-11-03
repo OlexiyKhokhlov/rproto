@@ -16,6 +16,8 @@ public:
 
     void setContent(RProto::IContentPtrT c);
 
+    QModelIndex indexByPage(int page);
+
     //Interface QAbstractItemModel
     virtual int columnCount(const QModelIndex &parent) const override;
     virtual int rowCount(const QModelIndex &parent) const override;
