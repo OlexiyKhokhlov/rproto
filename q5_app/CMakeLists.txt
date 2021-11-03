@@ -11,21 +11,25 @@ qt5_add_resources(reader_RSRC icons.qrc)
 
 set(reader_HEADERS
     bookfactory.h
+    draghelper.h
     mainwindow.h
     pageview.h
     contentmodel.h
     contentview.h
-    draghelper.h
+    filehistorymodel.h
+    filehistoryview.h
 )
 
 set(reader_SOURCES
     main.cpp
     bookfactory.cpp
+    draghelper.cpp
     mainwindow.cpp
     pageview.cpp
     contentmodel.cpp
     contentview.cpp
-    draghelper.cpp
+    filehistorymodel.cpp
+    filehistoryview.cpp
 )
 
 add_executable(reader

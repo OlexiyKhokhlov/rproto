@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "pageview.h"
 #include "contentview.h"
+#include "filehistoryview.h"
 
 #include <bookfactory.h>
 #include <ibook.h>
@@ -16,6 +17,7 @@
 #include <QHBoxLayout>
 #include <QComboBox>
 #include <QSpinBox>
+#include <QListView>
 #include <QDebug>
 
 MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags)
@@ -53,11 +55,21 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags)
     addAction(end);
     connect(end, SIGNAL(triggered(bool)), pageView, SLOT(toEnd()));
 
+    QDockWidget* historyDoc = new QDockWidget(tr("History"), nullptr);
+    historyDoc->setObjectName("HistoryDock");
+    historyView = new FileHistoryView(historyDoc);
+    historyView->loadFrom(settings);
+    connect(historyView, SIGNAL(openFile(const QString&)), this, SLOT(onOpenFile(const QString&)));
+    historyDoc->setWidget(historyView);
+    addDockWidget(Qt::LeftDockWidgetArea, historyDoc);
+
     QDockWidget* contentDock = new QDockWidget(tr("Content"), nullptr);
     contentDock->setObjectName("ContentDock");
     contentView = new ContentView(contentDock);
     contentDock->setWidget(contentView);
     addDockWidget(Qt::LeftDockWidgetArea, contentDock);
+
+    tabifyDockWidget(contentDock, historyDoc);
 
     QToolBar *toolbar = new QToolBar(tr("Main Toolbar"));
     toolbar->setObjectName("MainToolBar");
@@ -124,9 +136,10 @@ void MainWindow::closeEvent( QCloseEvent* )
     QSettings settings;
     settings.setValue("MainWindow/geometry", saveGeometry());
     settings.setValue("MainWindow/state", saveState());
+    historyView->saveTo(settings);
 }
 
-void MainWindow::onUpdateTitle(QString new_title)
+void MainWindow::onUpdateTitle(const QString& new_title)
 {
     QString title( tr("R-Proto"));
     if(!new_title.isEmpty()){
@@ -144,12 +157,15 @@ void MainWindow::onOpenFile()
                                                     tr("Book Files (%1)").arg("*.pdf"),
                                                     0,
                                                     QFileDialog::DontUseNativeDialog );
-    if(file_path.isEmpty())
-      return;
+    if(!file_path.isEmpty())
+      onOpenFile(file_path);
+}
 
+void MainWindow::onOpenFile(const QString& file_path) {
     auto book = bookFactory->createBook(file_path);
-    if (book == nullptr)
+    if (book == nullptr) {
         return;
+    }
 
     auto content = book->createContent();
     contentView->setContent(content);
@@ -158,6 +174,8 @@ void MainWindow::onOpenFile()
     auto mpg = pageView->getMaxPage()+1;
     page_spin->setRange(1, mpg);
     max_page->setText(QString("/%1").arg(mpg));
+
+    historyView->onFileOpened(file_path);
 }
 
 void MainWindow::onNavigationMode(bool checked){

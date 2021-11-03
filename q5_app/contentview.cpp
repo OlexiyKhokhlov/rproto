@@ -4,7 +4,7 @@
 #include <QHeaderView>
 
 ContentView::ContentView(QWidget* parent)
-    :QTreeView(parent)
+    : QTreeView(parent)
 {
     cmodel = new ContentModel(this);
     setModel(cmodel);

@@ -1,17 +1,21 @@
 #pragma once
 
+#include <forward.h>
 #include <QMainWindow>
 #include <memory>
 
-class QComboBox;
-class ContentView;
-class QSpinBox;
-class QLabel;
-
-class PageView;
 namespace RProto{
     class BookFactory;
 }
+
+class PageView;
+class ContentView;
+class FileHistoryView;
+
+class QComboBox;
+class QSpinBox;
+class QLabel;
+class QListView;
 
 class MainWindow : public QMainWindow
 {
@@ -22,8 +26,9 @@ public:
     virtual ~MainWindow();
 
 public slots:
-    void onUpdateTitle(QString new_title);
+    void onUpdateTitle(const QString& new_title);
     void onOpenFile();
+    void onOpenFile(const QString& path);
     void onNavigationMode(bool checked);
     void onFullScreen(bool checked);
     void onZoomIn();
@@ -40,9 +45,9 @@ private:
     std::unique_ptr<RProto::BookFactory> bookFactory;;
     PageView*            pageView  = nullptr;
     ContentView*         contentView = nullptr;
+    FileHistoryView*     historyView = nullptr;
+
     QComboBox*           zoomCombo = nullptr;
     QSpinBox*            page_spin = nullptr;
     QLabel*              max_page = nullptr;
-
-
 };

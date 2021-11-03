@@ -1,20 +1,22 @@
 #pragma once
 
-#include <forward.h>
 #include <QAbstractItemModel>
+#include <QList>
+#include <QStringList>
 
-namespace RProto{
-    class IContent;
-}
+class QSettings;
 
-class ContentModel : public QAbstractItemModel
+class FileHistoryModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:
-    ContentModel(QObject* parent=nullptr);
-    virtual ~ContentModel();
+    using FileListT = QStringList;
 
-    void setContent(RProto::IContentPtrT c);
+    FileHistoryModel(QObject* parent=nullptr);
+    virtual ~FileHistoryModel();
+
+    void loadFrom(QSettings& settings);
+    void saveTo(QSettings& settings) const;
 
     //Interface QAbstractItemModel
     virtual int columnCount(const QModelIndex &parent) const override;
@@ -24,6 +26,9 @@ public:
     virtual QModelIndex parent(const QModelIndex &child) const override;
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
+public slots:
+    void onFileOpened(QString file_path);
+
 private:
-    RProto::IContentPtrT content;
+    FileListT  file_list;
 };

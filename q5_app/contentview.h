@@ -3,9 +3,6 @@
 #include <forward.h>
 #include <QTreeView>
 
-namespace RProto{
-    class IContent;
-}
 class ContentModel;
 
 class ContentView : public QTreeView
@@ -14,7 +11,7 @@ class ContentView : public QTreeView
     Q_PROPERTY(int page READ page WRITE setPage NOTIFY pageChanged)
 
 public:
-    ContentView(QWidget* parent=0);
+    ContentView(QWidget* parent=nullptr);
 
     void setContent(RProto::IContentPtrT c);
 
@@ -31,6 +28,6 @@ private slots:
     void onActivated(const QModelIndex& index);
 
 private:
-    ContentModel *cmodel;
-    int current_page;
+    ContentModel *cmodel = nullptr;
+    int current_page = 0;
 };
