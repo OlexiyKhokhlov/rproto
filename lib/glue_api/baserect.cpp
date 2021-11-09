@@ -15,10 +15,6 @@ BaseRect::BaseRect(ILayoutPtrT lay, int page, double zoom, int x, int y, int wid
     assert(mLayout != nullptr);
 }
 
-BaseRect::~BaseRect()
-{
-}
-
 //interface IRect
 ILayoutPtrT BaseRect::layout()const
 {

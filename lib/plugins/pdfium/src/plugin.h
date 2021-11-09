@@ -12,8 +12,8 @@ public:
 
 private:
     //IPlugin interface
-    virtual RProto::IBookPtrT createBook(const char* file) override;
-    virtual const std::vector<std::string>& fileExtensions() override;
+    RProto::IBookPtrT createBook(const char* file) override;
+    const std::vector<std::string>& fileExtensions() const override;
 
     std::vector<std::string> extensions = {"pdf"};
 };

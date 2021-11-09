@@ -11,14 +11,14 @@ public:
     void Init();
     void Close();
 
-    void BLL_lock(){
+    void lock(){
         bll_mutex.lock();
     }
 
-    bool BLL_try_lock(){
+    bool try_lock(){
         return bll_mutex.try_lock();
     }
-    void BLL_unlock(){
+    void unlock(){
         bll_mutex.unlock();
     }
 

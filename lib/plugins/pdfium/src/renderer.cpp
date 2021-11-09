@@ -47,14 +47,9 @@ Renderer::Renderer(std::shared_ptr<Book> b)
     assert(bookOwner != nullptr);
 }
 
-Renderer::~Renderer(){
-}
-
 RProto::ImageTilePtrT Renderer::renderRect(RProto::IRectPtrT rect)
 {
-    auto pdf_page_ptr = bookOwner->getPage(rect->page());
-    if(pdf_page_ptr == nullptr)
-        return nullptr;
+    auto pdf_page = bookOwner->getPage(rect->page());
 
     auto tile = std::make_shared<ImageTile>(rect->layout(), rect->page(), rect->zoom(),
                   rect->x()*rect->zoom(), rect->y()*rect->zoom(),
@@ -62,19 +57,16 @@ RProto::ImageTilePtrT Renderer::renderRect(RProto::IRectPtrT rect)
 
     auto size = rect->layout()->pageSize(rect->page());
     auto zoom = rect->zoom();
-    Singletone<Library>::instance().BLL_lock();
-    FPDF_RenderPageBitmap( tile->pdfBitmap(), pdf_page_ptr->pdf_page,
-                          0, 0,
-                          size.first*zoom, size.second*zoom,
-                          0/*rotate*/, /*0x183*/0x0/*falgs*/);
-    Singletone<Library>::instance().BLL_unlock();
+    {
+        std::scoped_lock<Library>  lock(Singletone<Library>::instance());
+        FPDF_RenderPageBitmap( tile->pdfBitmap(), pdf_page->pdf_page,
+                              0, 0,
+                              size.first*zoom, size.second*zoom,
+                              0/*rotate*/, /*0x183*/0x201/*falgs*/);
+    }
     return tile;
 }
 
 RProto::ImageTilePtrT Renderer::renderThumbnail(RProto::IRectPtrT /*rect*/){
     return nullptr;
-}
-
-void Renderer::addListener(RProto::IRendererListener* /*listener*/){
-
 }

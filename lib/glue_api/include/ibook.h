@@ -8,7 +8,7 @@ namespace RProto {
 class IBook
 {
 public:
-    virtual ~IBook(){}
+    virtual ~IBook()= default;
 
     virtual ILayoutPtrT   createLayout(double dpix, double dpiy) = 0;
     virtual IRendererPtrT createRenderer() = 0;

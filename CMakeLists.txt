@@ -10,10 +10,10 @@ message(STATUS "Build type:" ${CMAKE_BUILD_TYPE})
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 list(REMOVE_DUPLICATES CMAKE_MODULE_PATH)
 
-set(USE_QT4 OFF CACHE BOOL "use Qt4 or Qt5")
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-#Enable C++0x
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -std=c++20 -Wc++20-compat -Wall -Wextra -pipe -fno-rtti -fvisibility=hidden")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wc++20-compat -Wall -Wextra -pipe -fno-rtti -fvisibility=hidden")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -pipe -fvisibility=hidden")
 
 set(CMAKE_CXX_FLAGS_DEBUG "-ggdb -O0 -fno-omit-frame-pointer")
@@ -43,12 +43,6 @@ else(WIN32)
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address")
   set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=address")
   set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS} -fsanitize=address")
-
-  set(USE_BINUTILS_WORKAROUND ON CACHE BOOL "use gcc-ar and gcc-ranlib instead ar and ranlib (is needed for LTO)")
-  if(USE_BINUTILS_WORKAROUND)
-    set(CMAKE_AR gcc-ar)
-    set(CMAKE_RANLIB gcc-ranlib)
-  endif(USE_BINUTILS_WORKAROUND)
 endif(WIN32)
 
 set(DEBUG_INSTALL_ROOT "${CMAKE_CURRENT_BINARY_DIR}/local_root")

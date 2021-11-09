@@ -14,10 +14,6 @@ BasePoint::BasePoint(ILayoutPtrT lay, int page, double zoom, int x, int y)
     assert(mLayout != nullptr);
 }
 
-BasePoint::~BasePoint()
-{
-}
-
 //Interface IPoint
 RProto::ILayoutPtrT BasePoint::layout()const
 {

@@ -32,8 +32,8 @@ public:
     virtual ~ImageTile();
 
     // IImageTile interface
-    virtual const char* data() const override;
-    virtual const RProto::IRectPtrT rect() const override;
+    const char* data() const override;
+    const RProto::IRectPtrT rect() const override;
 
     FPDF_BITMAP pdfBitmap(){
         return pdf_bitmap;

@@ -9,10 +9,10 @@ namespace RProto{
 class IPlugin
 {
 public:
-    virtual ~IPlugin(){}
+    virtual ~IPlugin() = default;
     
     //IPlugin
     virtual IBookPtrT createBook(const char* file) = 0;
-    virtual const std::vector<std::string>& fileExtensions() = 0;
+    virtual const std::vector<std::string>& fileExtensions() const = 0;
 };
 }

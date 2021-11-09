@@ -39,7 +39,13 @@ void ContentView::onActivated(const QModelIndex& index){
 }
 
 void ContentView::onPageHasChanged(int page) {
-    auto index = cmodel->indexByPage(page);
+    auto index = currentIndex();
+    if (index.isValid()) {
+        index = cmodel->index(index.row(), 1, index.parent());
+        if (cmodel->data(index, Qt::DisplayRole).toInt() == page - 1)
+            return;
+    }
+    index = cmodel->indexByPage(page);
     if (index.isValid()) {
         blockSignals(true);
         setCurrentIndex(index);

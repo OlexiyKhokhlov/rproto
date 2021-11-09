@@ -25,12 +25,8 @@ int main(int argc, char *argv[])
         app.installTranslator(&translator);
     }
 
-    auto* mwindow = new MainWindow();
+    auto mwindow = std::make_unique<MainWindow>();
     mwindow->show();
 
-    auto retcode = app.exec();
-
-    delete mwindow;
-
-    return retcode;
+    return app.exec();
 }

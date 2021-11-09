@@ -21,7 +21,7 @@
 #include <QListView>
 #include <QDebug>
 
-MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags)
+MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags)
 {
     setMinimumWidth(600);
@@ -87,6 +87,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags)
     navMode->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_N));
     navMode->setCheckable(true);
 
+    toolbar->addSeparator();
     QAction* zoomOut = toolbar->addAction(QIcon(":/icons/zoom_out"), tr("&Zoom Out"), this, SLOT(onZoomOut()));
     zoomOut->setShortcut(QKeySequence(QKeySequence::ZoomOut));
 
@@ -100,6 +101,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags)
 
     QAction* zoomIn = toolbar->addAction(QIcon(":/icons/zoom_in"), tr("&Zoom In"), this, SLOT(onZoomIn()));
     zoomIn->setShortcut(QKeySequence(QKeySequence::ZoomIn));
+    toolbar->addSeparator();
 
     QAction* rotateCCW = toolbar->addAction(QIcon(":/icons/rotate_ccw"), tr("&Rotate Counterclockwise"), this, SLOT(onRotateCCW()));
     rotateCCW->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));
@@ -171,6 +173,7 @@ void MainWindow::onOpenFile(const QString& file_path) {
     pageSpinBox->onMaxPageChanged(mpg);
 
     historyView->onFileOpened(file_path);
+    onUpdateTitle(QFileInfo(file_path).fileName());
 }
 
 void MainWindow::onNavigationMode(bool checked){

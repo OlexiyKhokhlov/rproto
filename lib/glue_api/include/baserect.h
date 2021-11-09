@@ -8,7 +8,7 @@ class BaseRect : public IRect
 {
 public:
     BaseRect(ILayoutPtrT lay, int page, double zoom, int x, int y, int width, int height);
-    virtual ~BaseRect();
+    virtual ~BaseRect() = default;
 
     //interface IRect
     virtual ILayoutPtrT layout()const override;

@@ -22,8 +22,10 @@ PageView::PageView(QWidget *parent)
 {
     viewport()->setAttribute(Qt::WA_OpaquePaintEvent);
     viewport()->setAttribute(Qt::WA_NoSystemBackground);
-
     viewport()->setMouseTracking(true);
+
+    verticalScrollBar()->setSingleStep(10);
+    horizontalScrollBar()->setSingleStep(10);
 
     dragHelper = new DragHelper(this, this);
 

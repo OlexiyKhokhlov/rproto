@@ -7,14 +7,14 @@ namespace RProto{
 
 class IContentListener{
 public:
-    virtual ~IContentListener(){}
+    virtual ~IContentListener()= default;
     virtual void onSubcontentAdded(int subcontent_id) =0;
 };
 
 class IContent
 {
 public:
-    virtual ~IContent(){}
+    virtual ~IContent()= default;
 
     virtual void addListener(RProto::IContentListener *listener) =0;
     virtual const std::string& title(int subcontent_id, int row) const =0;

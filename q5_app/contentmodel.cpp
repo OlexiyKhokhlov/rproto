@@ -42,7 +42,7 @@ QModelIndex ContentModel::indexByPage(int page) {
 }
 
 //Interface QAbstractItemModel
-int ContentModel::columnCount(const QModelIndex& parent) const{
+int ContentModel::columnCount(const QModelIndex& /*parent*/) const{
     return content == nullptr? 0 : 2;
 }
 

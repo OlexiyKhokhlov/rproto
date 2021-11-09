@@ -11,18 +11,18 @@ public:
     virtual ~Content();
 
     //Interface IContent
-    virtual void addListener(RProto::IContentListener *listener) override;
-    virtual const std::string& title(int subcontent_id, int row) const override;
-    virtual int pageNumber(int subcontent_id, int row) const override;
-    virtual std::pair<int,int> parentId(int subcontent_id) const override;
-    virtual int childsId(int parent_id, int parent_row) const override;
-    virtual int rowCount(int subcontent_id) const override;
+    void addListener(RProto::IContentListener *listener) override;
+    const std::string& title(int subcontent_id, int row) const override;
+    int pageNumber(int subcontent_id, int row) const override;
+    std::pair<int,int> parentId(int subcontent_id) const override;
+    int childsId(int parent_id, int parent_row) const override;
+    int rowCount(int subcontent_id) const override;
 
 private:
     FPDF_DOCUMENT pdf_doc;
     RProto::IContentListener *listener;
 
-    struct Item{
+    struct Item {
         FPDF_BOOKMARK bookmark;
         std::string title;
         int page;

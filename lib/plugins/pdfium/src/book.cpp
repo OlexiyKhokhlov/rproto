@@ -7,15 +7,18 @@
 #include <content.h>
 
 Book::Book(FPDF_DOCUMENT doc)
-    :pdf_doc(doc)
-    ,pageCache(sizeof(std::shared_ptr<Page>)*10, 0.75f) //10 pages max
+    : pdf_doc(doc)
+    , pageCache(sizeof(std::shared_ptr<Page>)*10, 0.75f) //10 pages max
 {
+    assert(pdf_doc);
 }
 
-Book::~Book()
-{
+Book::~Book() {
     pageCache.clear();
-    FPDF_CloseDocument(pdf_doc);
+    {
+        std::scoped_lock<Library>  lock(Singletone<Library>::instance());
+        FPDF_CloseDocument(pdf_doc);
+    }
 }
 
 //IBook interface
@@ -34,18 +37,20 @@ RProto::IContentPtrT Book::createContent(){
 }
 
 std::shared_ptr<Book::Page> Book::getPage(int num){
-    cacheMutex.lock();
+    std::scoped_lock<std::mutex> lock(cacheMutex);
 
     auto it = pageCache.map_find(num);
     if(it != pageCache.map_end()){
         pageCache.touch(it->second.second);
-        cacheMutex.unlock();
         return it->second.first;
     }
 
-    std::shared_ptr<Book::Page> pg(new Page(pdf_doc, num));
-    pageCache.push_front(num, pg);
+    std::shared_ptr<Page> page;
+    {
+        std::scoped_lock<Library>  lock(Singletone<Library>::instance());
+        page = std::make_shared<Page>(FPDF_LoadPage(pdf_doc, num));
+    }
+    pageCache.push_front(num, page);
 
-    cacheMutex.unlock();
-    return pg;
+    return page;
 }

@@ -12,29 +12,31 @@ class Layout : public RProto::ILayout, IInternalLayout, public std::enable_share
 {
 public:
     explicit Layout(std::shared_ptr<Book> book, double dpix, double dpiy);
-    virtual ~Layout();
+    virtual ~Layout() = default;
 
     //ILayout interface
-    virtual void addListener(RProto::ILayoutListener* listener) override;
-    virtual RProto::IBookPtrT book() override;
-    virtual void startLayouting() override;
-    virtual void cancelLayouting() override;
-    virtual int pages()const override;
-    virtual std::pair<int,int> pageSize(int rpage=0)const override;
-    virtual double pageZoom(int rpage=0)const override;
-    virtual void setPageZoom(int rpage=0, double zoom=1) override;
-    virtual void setDocumentZoom(double zoom=1) override;
-    virtual RProto::IPointPtrT createPoint(int rpage, int x, int y) override;
+    void addListener(RProto::ILayoutListener* listener) override;
+    RProto::IBookPtrT book() override;
+    void startLayouting() override;
+    void cancelLayouting() override;
+    int pages()const override;
+    std::pair<int,int> pageSize(int rpage=0)const override;
+    double pageZoom(int rpage=0)const override;
+    void setPageZoom(int rpage=0, double zoom=1) override;
+    void setDocumentZoom(double zoom=1) override;
+    RProto::IPointPtrT createPoint(int rpage, int x, int y) override;
     //TODO create a point by link
     //virtual IPoint* createPoint(ILink *link)const override;
-    virtual RProto::IRectPtrT createRect(int rpage, int x, int y, int width, int height) override;
+    RProto::IRectPtrT createRect(int rpage, int x, int y, int width, int height) override;
 
     //IInternalLayout interface
-    virtual IInternalLayout::PageDescriptor& getPageDescr(int rpage=0) override;
+    IInternalLayout::PageDescriptor& getPageDescr(int rpage=0) override;
 
 private:
     std::shared_ptr<Book> bookOwner;
     double dpiX, dpiY;
     std::vector<IInternalLayout::PageDescriptor> page_vector;
     RProto::ILayoutListener* listenerPtr = nullptr;
+
+    void readPageLinks(int page);
 };

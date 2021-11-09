@@ -9,7 +9,7 @@ class BasePoint : public RProto::IPoint
 {
 public:
     BasePoint(ILayoutPtrT lay, int page, double zoom, int x, int y);
-    virtual ~BasePoint();
+    virtual ~BasePoint() = default;
 
 private:
     //Interface IPoint

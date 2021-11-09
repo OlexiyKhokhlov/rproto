@@ -4,6 +4,7 @@
 #include <rect.h>
 
 #include <fpdfview.h>
+#include <fpdf_doc.h>
 
 #include <assert.h>
 
@@ -16,14 +17,6 @@ Layout::Layout(std::shared_ptr<Book> b, double dpix, double dpiy)
     assert(bookOwner != nullptr);
 }
 
-Layout::~Layout()
-{
-    for(auto& pg : page_vector){
-        if(pg.isValid)
-            FPDF_ClosePage(pg.pdf_page);
-    }
-}
-
 //ILayout interface
 void Layout::addListener(RProto::ILayoutListener* listener){
     listenerPtr = listener;
@@ -33,16 +26,13 @@ RProto::IBookPtrT Layout::book(){
     return bookOwner;
 }
 
-void Layout::startLayouting(){
-    auto page_count = FPDF_GetPageCount(bookOwner->document());
-    page_vector.reserve(page_count);
-
-    for(int i=0; i<page_count; ++i){
-        IInternalLayout::PageDescriptor pg={false, 0, 1};
-        page_vector.push_back(pg);
+void Layout::startLayouting() {
+    int page_count = 0;
+    {
+        std::scoped_lock<Library>  lock(Singletone<Library>::instance());
+        page_count = FPDF_GetPageCount(bookOwner->document());
     }
-
-    //emit pageCountChanged(page_count);
+    page_vector.resize(page_count, {1.0, {}});
 }
 
 void Layout::cancelLayouting(){
@@ -61,7 +51,10 @@ std::pair<int,int> Layout::pageSize(int rpage)const
 
     double width=0;
     double height=0;
-    FPDF_GetPageSizeByIndex(bookOwner->document(), rpage, &width, &height);
+    {
+        std::scoped_lock<Library>  lock(Singletone<Library>::instance());
+        FPDF_GetPageSizeByIndex(bookOwner->document(), rpage, &width, &height);
+    }
 
     width = width/72*dpiX;
     height = height/72*dpiY;
@@ -112,3 +105,38 @@ RProto::IRectPtrT Layout::createRect(int rpage, int x, int y, int width, int hei
 IInternalLayout::PageDescriptor& Layout::getPageDescr(int rpage){
     return page_vector[rpage];
 }
+
+void Layout::readPageLinks(int page) {
+    auto pdf_page = bookOwner->getPage(page);
+    {
+        std::scoped_lock<Library>  lock(Singletone<Library>::instance());
+
+        IInternalLayout::Link link;
+        FPDF_BOOL hasXCoord = 0;
+        FPDF_BOOL hasYCoord = 0;
+        FPDF_BOOL hasZoom   = 0;
+
+        FPDF_LINK linkAnnot;
+        int link_pos = 0;
+        while (FPDFLink_Enumerate(pdf_page->pdf_page, &link_pos, &linkAnnot)) {
+            FPDF_DEST dest = nullptr;
+            if (FPDFLink_GetAnnotRect(linkAnnot, &link.rect)) {
+                dest = FPDFLink_GetDest(bookOwner->document(), linkAnnot);
+                link.page = FPDFDest_GetPageIndex(bookOwner->document(), dest);
+                if (FPDFDest_GetLocationInPage(dest, &hasXCoord, &hasYCoord, &hasZoom,
+                                               &link.x, &link.y, &link.zoom)) {
+                            page_vector[page].links.push_back(link);
+                }
+            }
+        }
+    }
+}
+//        auto pdf_text = FPDFText_LoadPage(pdf_page);
+//        auto pdf_link_page = FPDFLink_LoadWebLinks(pdf_text);
+//        auto links_count = FPDFLink_CountWebLinks(pdf_link_page);
+//        for(int l=0; l < links_count; ++l) {
+//            unsigned short buf[1000];
+//            FPDFLink_GetURL(pdf_link_page, l, buf, 1000);
+//        }
+//        FPDFLink_CloseWebLinks(pdf_link_page);
+//        FPDFText_ClosePage(pdf_text);

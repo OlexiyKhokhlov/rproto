@@ -5,7 +5,7 @@ Library::Library()
 {
 }
 
-Library::~Library(){
+Library::~Library() {
     Close();
 }
 
